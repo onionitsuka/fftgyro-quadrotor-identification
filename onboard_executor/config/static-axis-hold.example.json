@@ -1,0 +1,57 @@
+{
+  "run_name": "fftgyro-roll-static-pos-pilot-r01",
+  "metadata": {
+    "stage": "FFTGYRO-2A-pilot",
+    "latex_phase": "5A",
+    "purpose": "static_axis_allocation",
+    "axis": "roll",
+    "direction": "positive",
+    "dataset_role": "pilot",
+    "wind_speed_mps": 0.0,
+    "repeat": 1,
+    "fixture_mode": "mechanically_locked",
+    "axes_mechanically_locked": false,
+    "fixed_angle_measured": false,
+    "axis_mix_status": "candidate_only_verify_on_propeller_off_outputs"
+  },
+  "uart": {
+    "device": "/dev/serial0",
+    "baud": 921600,
+    "target_system": 1,
+    "target_component": 1
+  },
+  "sample_rate_hz": 100,
+  "timeout_ms": 150,
+  "collective": 0.3,
+  "motor_min": 0.1,
+  "motor_max": 0.8,
+  "axis_mix": [
+    1.0,
+    -1.0,
+    1.0,
+    -1.0
+  ],
+  "motor_mapping_verified": false,
+  "collective_verified": false,
+  "mechanically_locked_verified": false,
+  "startup_ramp_rate": 0.2,
+  "normal_ramp_rate": 0.1,
+  "abort_ramp_rate": 0.5,
+  "log_directory": "/var/lib/fftgyro-executor",
+  "gpio": {
+    "enabled": false,
+    "chip": "/dev/gpiochip0",
+    "line": 17
+  },
+  "waveform": {
+    "type": "PULSE_COAST",
+    "amplitude": 0.03,
+    "preroll_s": 10.0,
+    "active_s": 22.0,
+    "posthold_s": 10.0,
+    "edge_s": 1.0,
+    "fade_s": 0.0,
+    "requires_mechanical_lock": true
+  },
+  "session_id": "example-static-axis-hold"
+}

@@ -1,0 +1,682 @@
+diff --git a/ROMFS/px4fmu_common/init.d/rcS b/ROMFS/px4fmu_common/init.d/rcS
+index 1337a777c8..b06faf2535 100644
+--- a/ROMFS/px4fmu_common/init.d/rcS
++++ b/ROMFS/px4fmu_common/init.d/rcS
+@@ -577,6 +577,11 @@ else
+ 
+ 	payload_deliverer start
+ 
++	if param compare -s FGX_EN 1
++	then
++		fftgyro_waveform start
++	fi
++
+ 	if param compare -s ICE_EN 1
+ 	then
+ 		internal_combustion_engine_control start
+diff --git a/boards/px4/fmu-v6x/default.px4board b/boards/px4/fmu-v6x/default.px4board
+index 4a20430f10..90eb31e06d 100644
+--- a/boards/px4/fmu-v6x/default.px4board
++++ b/boards/px4/fmu-v6x/default.px4board
+@@ -55,6 +55,7 @@ CONFIG_MODULES_DATAMAN=y
+ CONFIG_MODULES_EKF2=y
+ CONFIG_MODULES_ESC_BATTERY=y
+ CONFIG_MODULES_EVENTS=y
++CONFIG_MODULES_FFTGYRO_WAVEFORM=y
+ CONFIG_MODULES_FLIGHT_MODE_MANAGER=y
+ CONFIG_MODULES_FW_ATT_CONTROL=y
+ CONFIG_MODULES_FW_AUTOTUNE_ATTITUDE_CONTROL=y
+diff --git a/boards/px4/sitl/default.px4board b/boards/px4/sitl/default.px4board
+index ebe4f4ca5b..c0c88d32c8 100644
+--- a/boards/px4/sitl/default.px4board
++++ b/boards/px4/sitl/default.px4board
+@@ -18,6 +18,7 @@ CONFIG_MODULES_EKF2=y
+ CONFIG_EKF2_VERBOSE_STATUS=y
+ CONFIG_MODULES_EVENTS=y
+ CONFIG_MODULES_FLIGHT_MODE_MANAGER=y
++CONFIG_MODULES_FFTGYRO_WAVEFORM=y
+ CONFIG_MODULES_FW_ATT_CONTROL=y
+ CONFIG_MODULES_FW_AUTOTUNE_ATTITUDE_CONTROL=y
+ CONFIG_MODULES_FW_MODE_MANAGER=y
+diff --git a/src/modules/commander/Commander.cpp b/src/modules/commander/Commander.cpp
+index 663223c9bf..10fcfa30ac 100644
+--- a/src/modules/commander/Commander.cpp
++++ b/src/modules/commander/Commander.cpp
+@@ -1538,6 +1538,8 @@ Commander::handle_command(const vehicle_command_s &cmd)
+ 	case vehicle_command_s::VEHICLE_CMD_EXTERNAL_POSITION_ESTIMATE:
+ 	case vehicle_command_s::VEHICLE_CMD_REQUEST_CAMERA_INFORMATION:
+ 	case vehicle_command_s::VEHICLE_CMD_EXTERNAL_ATTITUDE_ESTIMATE:
++	case 31010: // MAV_CMD_USER_1, handled by fftgyro_waveform
++	case 31011: // MAV_CMD_USER_2, handled by fftgyro_waveform
+ 		/* ignore commands that are handled by other parts of the system */
+ 		break;
+ 
+diff --git a/src/modules/fftgyro_waveform/CMakeLists.txt b/src/modules/fftgyro_waveform/CMakeLists.txt
+new file mode 100644
+index 0000000000..6d13e5933d
+--- /dev/null
++++ b/src/modules/fftgyro_waveform/CMakeLists.txt
+@@ -0,0 +1,44 @@
++############################################################################
++#
++#   Copyright (c) 2026 PX4 Development Team. All rights reserved.
++#
++# Redistribution and use in source and binary forms, with or without
++# modification, are permitted provided that the following conditions
++# are met:
++#
++# 1. Redistributions of source code must retain the above copyright
++#    notice, this list of conditions and the following disclaimer.
++# 2. Redistributions in binary form must reproduce the above copyright
++#    notice, this list of conditions and the following disclaimer in
++#    the documentation and/or other materials provided with the
++#    distribution.
++# 3. Neither the name PX4 nor the names of its contributors may be
++#    used to endorse or promote products derived from this software
++#    without specific prior written permission.
++#
++# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
++# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
++# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
++# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
++# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
++# OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++# AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
++# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
++# THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
++# DAMAGE.
++#
++############################################################################
++
++px4_add_module(
++	MODULE modules__fftgyro_waveform
++	MAIN fftgyro_waveform
++	SRCS
++		FftgyroWaveform.cpp
++		FftgyroWaveform.hpp
++	MODULE_CONFIG
++		module.yaml
++	DEPENDS
++		px4_work_queue
++	)
+diff --git a/src/modules/fftgyro_waveform/FftgyroWaveform.cpp b/src/modules/fftgyro_waveform/FftgyroWaveform.cpp
+new file mode 100644
+index 0000000000..2302a41d82
+--- /dev/null
++++ b/src/modules/fftgyro_waveform/FftgyroWaveform.cpp
+@@ -0,0 +1,413 @@
++/****************************************************************************
++ *
++ *   Copyright (c) 2026 PX4 Development Team. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in
++ *    the documentation and/or other materials provided with the
++ *    distribution.
++ * 3. Neither the name PX4 nor the names of its contributors may be
++ *    used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
++ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
++ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
++ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
++ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
++ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
++ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
++ * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
++ * DAMAGE.
++ *
++ ****************************************************************************/
++
++#include "FftgyroWaveform.hpp"
++
++#include <cmath>
++#include <cstddef>
++#include <cstring>
++
++#include <drivers/drv_hrt.h>
++#include <lib/mathlib/mathlib.h>
++#include <mathlib/mathlib.h>
++#include <px4_platform_common/log.h>
++
++FftgyroWaveform::FftgyroWaveform() :
++	ModuleParams(nullptr),
++	ScheduledWorkItem(MODULE_NAME, px4::wq_configurations::rate_ctrl)
++{
++}
++
++bool FftgyroWaveform::init()
++{
++	if (_param_enable.get() != 1) {
++		PX4_ERR("FGX_EN is disabled");
++		return false;
++	}
++
++	ScheduleOnInterval(10_ms);
++	return true;
++}
++
++bool FftgyroWaveform::command_is_for_us(const vehicle_command_s &command) const
++{
++	return (command.target_system == 0 || command.target_system == _vehicle_status.system_id)
++	       && (command.target_component == 0 || command.target_component == _vehicle_status.component_id);
++}
++
++bool FftgyroWaveform::active() const
++{
++	return _state == State::RampUp || _state == State::Preroll
++	       || _state == State::Running || _state == State::RampDown;
++}
++
++bool FftgyroWaveform::start_gate_open() const
++{
++	return _vehicle_status.arming_state != vehicle_status_s::ARMING_STATE_ARMED
++	       && !_vehicle_status.failsafe
++	       && !_vehicle_status.gcs_connection_lost
++	       && !_actuator_armed.armed
++	       && !_actuator_armed.prearmed
++	       && !_actuator_armed.lockdown
++	       && !_actuator_armed.kill
++	       && !_actuator_armed.termination
++	       && !_actuator_armed.in_esc_calibration_mode
++	       && _param_motor_test_enable.get() == 1;
++}
++
++void FftgyroWaveform::acknowledge(const vehicle_command_s &command, uint8_t result, int32_t result_param2)
++{
++	vehicle_command_ack_s ack{};
++	ack.timestamp = hrt_absolute_time();
++	ack.command = command.command;
++	ack.result = result;
++	ack.result_param1 = static_cast<uint8_t>(_state);
++	ack.result_param2 = result_param2;
++	ack.target_system = command.source_system;
++	ack.target_component = command.source_component;
++	_vehicle_command_ack_pub.publish(ack);
++}
++
++uint32_t FftgyroWaveform::configuration_token(const Configuration &configuration) const
++{
++	const uint8_t *bytes = reinterpret_cast<const uint8_t *>(&configuration);
++	uint32_t hash = 2166136261u;
++
++	for (size_t i = 0; i < offsetof(Configuration, token); ++i) {
++		hash = (hash ^ bytes[i]) * 16777619u;
++	}
++
++	return hash & kTokenMask;
++}
++
++bool FftgyroWaveform::read_configuration(const vehicle_command_s &command, Configuration &configuration) const
++{
++	configuration.collective = command.param2;
++	configuration.delta = command.param3;
++	configuration.duration_s = command.param4;
++	configuration.positive_mask = static_cast<uint32_t>(lroundf(command.param5));
++	configuration.ramp_s = command.param6;
++	configuration.preroll_s = command.param7;
++
++	int positive_count = 0;
++
++	for (int i = 0; i < kMotorCount; ++i) {
++		positive_count += (configuration.positive_mask >> i) & 1u;
++	}
++
++	const bool valid = PX4_ISFINITE(configuration.collective)
++			   && configuration.collective >= 0.05f && configuration.collective <= 0.75f
++			   && PX4_ISFINITE(configuration.delta)
++			   && configuration.delta >= 0.001f && configuration.delta <= 0.08f
++			   && configuration.collective - configuration.delta >= 0.f
++			   && configuration.collective + configuration.delta <= 0.8f
++			   && PX4_ISFINITE(configuration.duration_s)
++			   && configuration.duration_s >= 0.2f && configuration.duration_s <= 30.f
++			   && configuration.positive_mask < (1u << kMotorCount)
++			   && positive_count == 2
++			   && PX4_ISFINITE(configuration.ramp_s)
++			   && configuration.ramp_s >= 0.1f && configuration.ramp_s <= 5.f
++			   && PX4_ISFINITE(configuration.preroll_s)
++			   && configuration.preroll_s >= 0.5f && configuration.preroll_s <= 10.f;
++
++	if (valid) {
++		configuration.token = configuration_token(configuration);
++	}
++
++	return valid;
++}
++
++void FftgyroWaveform::calculate_commands(float collective, float delta, float commands[kMotorCount]) const
++{
++	for (int i = 0; i < kMotorCount; ++i) {
++		const float sign = (_configuration.positive_mask & (1u << i)) ? 1.f : -1.f;
++		commands[i] = math::constrain(collective + sign * delta, 0.f, 0.8f);
++	}
++}
++
++void FftgyroWaveform::publish_commands(hrt_abstime now)
++{
++	for (int i = 0; i < kMotorCount; ++i) {
++		actuator_test_s actuator_test{};
++		actuator_test.timestamp = now;
++		actuator_test.action = actuator_test_s::ACTION_DO_CONTROL;
++		actuator_test.function = actuator_test_s::FUNCTION_MOTOR1 + i;
++		actuator_test.value = _current_commands[i];
++		actuator_test.timeout_ms = kActuatorTestTimeoutMs;
++		_actuator_test_pub.publish(actuator_test);
++	}
++}
++
++void FftgyroWaveform::release_control(hrt_abstime now)
++{
++	for (int i = 0; i < kMotorCount; ++i) {
++		actuator_test_s actuator_test{};
++		actuator_test.timestamp = now;
++		actuator_test.action = actuator_test_s::ACTION_RELEASE_CONTROL;
++		actuator_test.function = actuator_test_s::FUNCTION_MOTOR1 + i;
++		actuator_test.value = NAN;
++		_actuator_test_pub.publish(actuator_test);
++	}
++}
++
++void FftgyroWaveform::begin_abort(hrt_abstime now, bool allow_ramp)
++{
++	if (_state == State::RampDown) {
++		return;
++	}
++
++	if (allow_ramp && active()) {
++		memcpy(_ramp_start_commands, _current_commands, sizeof(_ramp_start_commands));
++		_state = State::RampDown;
++		_state_started = now;
++
++	} else {
++		release_control(now);
++		memset(_current_commands, 0, sizeof(_current_commands));
++		_state = State::Idle;
++	}
++}
++
++void FftgyroWaveform::handle_command(const vehicle_command_s &command, hrt_abstime now)
++{
++	if (!command_is_for_us(command)) {
++		return;
++	}
++
++	if (command.command == kCommandAbort) {
++		begin_abort(now, true);
++		acknowledge(command, vehicle_command_ack_s::VEHICLE_CMD_RESULT_ACCEPTED);
++		return;
++	}
++
++	if (command.command != kCommandControl) {
++		return;
++	}
++
++	const int action = static_cast<int>(lroundf(command.param1));
++
++	if (action == 1) {
++		Configuration candidate{};
++
++		if (active()) {
++			acknowledge(command, vehicle_command_ack_s::VEHICLE_CMD_RESULT_TEMPORARILY_REJECTED);
++
++		} else if (!read_configuration(command, candidate)) {
++			acknowledge(command, vehicle_command_ack_s::VEHICLE_CMD_RESULT_DENIED);
++
++		} else {
++			_configuration = candidate;
++			_state = State::Prepared;
++			acknowledge(command, vehicle_command_ack_s::VEHICLE_CMD_RESULT_ACCEPTED,
++				    static_cast<int32_t>(_configuration.token));
++		}
++
++	} else if (action == 2) {
++		const uint32_t token = static_cast<uint32_t>(lroundf(command.param2)) & kTokenMask;
++
++		if (_state == State::Prepared && token == _configuration.token && start_gate_open()) {
++			memset(_current_commands, 0, sizeof(_current_commands));
++			_state = State::RampUp;
++			_state_started = now;
++			acknowledge(command, vehicle_command_ack_s::VEHICLE_CMD_RESULT_ACCEPTED,
++				    static_cast<int32_t>(_configuration.token));
++
++		} else {
++			acknowledge(command, vehicle_command_ack_s::VEHICLE_CMD_RESULT_TEMPORARILY_REJECTED);
++		}
++
++	} else if (action == 3 && !active()) {
++		release_control(now);
++		_state = State::Idle;
++		acknowledge(command, vehicle_command_ack_s::VEHICLE_CMD_RESULT_ACCEPTED);
++
++	} else {
++		acknowledge(command, vehicle_command_ack_s::VEHICLE_CMD_RESULT_UNSUPPORTED);
++	}
++}
++
++void FftgyroWaveform::Run()
++{
++	if (should_exit()) {
++		release_control(hrt_absolute_time());
++		ScheduleClear();
++		exit_and_cleanup();
++		return;
++	}
++
++	const hrt_abstime now = hrt_absolute_time();
++	_vehicle_status_sub.update(&_vehicle_status);
++	_actuator_armed_sub.update(&_actuator_armed);
++
++	if (_parameter_update_sub.updated()) {
++		parameter_update_s update{};
++		_parameter_update_sub.copy(&update);
++		updateParams();
++
++		if ((_param_enable.get() != 1 || _param_motor_test_enable.get() != 1) && active()) {
++			begin_abort(now, true);
++		}
++	}
++
++	vehicle_command_s command{};
++
++	while (_vehicle_command_sub.update(&command)) {
++		handle_command(command, now);
++	}
++
++	if (active()) {
++		if (_actuator_armed.lockdown || _actuator_armed.kill || _actuator_armed.termination
++		    || _actuator_armed.armed
++		    || _vehicle_status.arming_state == vehicle_status_s::ARMING_STATE_ARMED) {
++			begin_abort(now, false);
++
++		} else if (_vehicle_status.failsafe || _vehicle_status.gcs_connection_lost) {
++			begin_abort(now, true);
++		}
++	}
++
++	const float elapsed_s = _state_started == 0 ? 0.f : (now - _state_started) * 1e-6f;
++
++	switch (_state) {
++	case State::Idle:
++	case State::Prepared:
++		break;
++
++	case State::RampUp: {
++			const float scale = math::constrain(elapsed_s / _configuration.ramp_s, 0.f, 1.f);
++			calculate_commands(_configuration.collective * scale, 0.f, _current_commands);
++			publish_commands(now);
++
++			if (elapsed_s >= _configuration.ramp_s) {
++				_state = State::Preroll;
++				_state_started = now;
++			}
++		}
++		break;
++
++	case State::Preroll:
++		calculate_commands(_configuration.collective, 0.f, _current_commands);
++		publish_commands(now);
++
++		if (elapsed_s >= _configuration.preroll_s) {
++			_state = State::Running;
++			_state_started = now;
++		}
++
++		break;
++
++	case State::Running:
++		calculate_commands(_configuration.collective, _configuration.delta, _current_commands);
++		publish_commands(now);
++
++		if (elapsed_s >= _configuration.duration_s) {
++			memcpy(_ramp_start_commands, _current_commands, sizeof(_ramp_start_commands));
++			_state = State::RampDown;
++			_state_started = now;
++		}
++
++		break;
++
++	case State::RampDown: {
++			const float scale = 1.f - math::constrain(elapsed_s / _configuration.ramp_s, 0.f, 1.f);
++
++			for (int i = 0; i < kMotorCount; ++i) {
++				_current_commands[i] = _ramp_start_commands[i] * scale;
++			}
++
++			publish_commands(now);
++
++			if (elapsed_s >= _configuration.ramp_s) {
++				release_control(now);
++				memset(_current_commands, 0, sizeof(_current_commands));
++				_state = State::Idle;
++			}
++		}
++		break;
++	}
++}
++
++int FftgyroWaveform::task_spawn(int argc, char *argv[])
++{
++	FftgyroWaveform *instance = new FftgyroWaveform();
++
++	if (instance != nullptr) {
++		_object.store(instance);
++		_task_id = task_id_is_work_queue;
++
++		if (instance->init()) {
++			return PX4_OK;
++		}
++	}
++
++	delete instance;
++	_object.store(nullptr);
++	_task_id = -1;
++	return PX4_ERROR;
++}
++
++int FftgyroWaveform::custom_command(int argc, char *argv[])
++{
++	return print_usage("unknown command");
++}
++
++int FftgyroWaveform::print_status()
++{
++	PX4_INFO("state: %u", static_cast<unsigned>(_state));
++	PX4_INFO("config token: %u", static_cast<unsigned>(_configuration.token));
++	return 0;
++}
++
++int FftgyroWaveform::print_usage(const char *reason)
++{
++	if (reason != nullptr) {
++		PX4_WARN("%s", reason);
++	}
++
++	PRINT_MODULE_DESCRIPTION(
++		R"DESCR_STR(
++Minimal local-clock four-motor step executor for restrained FFT GYRO tests.
++Prepare with MAV_CMD_USER_1: p1=1, p2=collective, p3=delta, p4=duration,
++p5=positive-motor bitmask, p6=ramp, p7=preroll. Start with p1=2, p2=token.
++MAV_CMD_USER_2 aborts.
++)DESCR_STR");
++	PRINT_MODULE_USAGE_NAME("fftgyro_waveform", "research");
++	PRINT_MODULE_USAGE_COMMAND("start");
++	PRINT_MODULE_USAGE_DEFAULT_COMMANDS();
++	return 0;
++}
++
++extern "C" __EXPORT int fftgyro_waveform_main(int argc, char *argv[])
++{
++	return FftgyroWaveform::main(argc, argv);
++}
+diff --git a/src/modules/fftgyro_waveform/FftgyroWaveform.hpp b/src/modules/fftgyro_waveform/FftgyroWaveform.hpp
+new file mode 100644
+index 0000000000..070bbd5498
+--- /dev/null
++++ b/src/modules/fftgyro_waveform/FftgyroWaveform.hpp
+@@ -0,0 +1,126 @@
++/****************************************************************************
++ *
++ *   Copyright (c) 2026 PX4 Development Team. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in
++ *    the documentation and/or other materials provided with the
++ *    distribution.
++ * 3. Neither the name PX4 nor the names of its contributors may be
++ *    used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
++ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
++ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
++ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
++ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
++ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
++ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
++ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
++ * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
++ * DAMAGE.
++ *
++ ****************************************************************************/
++
++#pragma once
++
++#include <px4_platform_common/module.h>
++#include <px4_platform_common/module_params.h>
++#include <px4_platform_common/px4_work_queue/ScheduledWorkItem.hpp>
++
++#include <uORB/Publication.hpp>
++#include <uORB/Subscription.hpp>
++#include <uORB/SubscriptionInterval.hpp>
++#include <uORB/topics/actuator_armed.h>
++#include <uORB/topics/actuator_test.h>
++#include <uORB/topics/parameter_update.h>
++#include <uORB/topics/vehicle_command.h>
++#include <uORB/topics/vehicle_command_ack.h>
++#include <uORB/topics/vehicle_status.h>
++
++using namespace time_literals;
++
++class FftgyroWaveform : public ModuleBase<FftgyroWaveform>,
++	public ModuleParams,
++	public px4::ScheduledWorkItem
++{
++public:
++	FftgyroWaveform();
++	~FftgyroWaveform() override = default;
++
++	static int task_spawn(int argc, char *argv[]);
++	static int custom_command(int argc, char *argv[]);
++	static int print_usage(const char *reason = nullptr);
++
++	bool init();
++	int print_status() override;
++
++private:
++	static constexpr uint32_t kCommandControl = 31010; // MAV_CMD_USER_1
++	static constexpr uint32_t kCommandAbort = 31011; // MAV_CMD_USER_2
++	static constexpr uint32_t kTokenMask = 0x00ffffff;
++	static constexpr uint32_t kActuatorTestTimeoutMs = 150;
++	static constexpr int kMotorCount = 4;
++
++	struct Configuration {
++		float collective{};
++		float delta{};
++		float duration_s{};
++		float ramp_s{};
++		float preroll_s{};
++		uint32_t positive_mask{};
++		uint32_t token{};
++	};
++
++	enum class State : uint8_t {
++		Idle,
++		Prepared,
++		RampUp,
++		Preroll,
++		Running,
++		RampDown,
++	};
++
++	void Run() override;
++	void handle_command(const vehicle_command_s &command, hrt_abstime now);
++	void acknowledge(const vehicle_command_s &command, uint8_t result, int32_t result_param2 = 0);
++	bool read_configuration(const vehicle_command_s &command, Configuration &configuration) const;
++	uint32_t configuration_token(const Configuration &configuration) const;
++	void calculate_commands(float collective, float delta, float commands[kMotorCount]) const;
++	void publish_commands(hrt_abstime now);
++	void release_control(hrt_abstime now);
++	void begin_abort(hrt_abstime now, bool allow_ramp);
++	bool command_is_for_us(const vehicle_command_s &command) const;
++	bool start_gate_open() const;
++	bool active() const;
++
++	uORB::Subscription _vehicle_command_sub{ORB_ID(vehicle_command)};
++	uORB::Subscription _vehicle_status_sub{ORB_ID(vehicle_status)};
++	uORB::Subscription _actuator_armed_sub{ORB_ID(actuator_armed)};
++	uORB::SubscriptionInterval _parameter_update_sub{ORB_ID(parameter_update), 1_s};
++
++	uORB::Publication<actuator_test_s> _actuator_test_pub{ORB_ID(actuator_test)};
++	uORB::Publication<vehicle_command_ack_s> _vehicle_command_ack_pub{ORB_ID(vehicle_command_ack)};
++
++	vehicle_status_s _vehicle_status{};
++	actuator_armed_s _actuator_armed{};
++	Configuration _configuration{};
++	State _state{State::Idle};
++	hrt_abstime _state_started{};
++	float _current_commands[kMotorCount] {};
++	float _ramp_start_commands[kMotorCount] {};
++
++	DEFINE_PARAMETERS(
++		(ParamInt<px4::params::FGX_EN>) _param_enable,
++		(ParamInt<px4::params::COM_MOT_TEST_EN>) _param_motor_test_enable
++	)
++};
+diff --git a/src/modules/fftgyro_waveform/Kconfig b/src/modules/fftgyro_waveform/Kconfig
+new file mode 100644
+index 0000000000..d1ee7e4eba
+--- /dev/null
++++ b/src/modules/fftgyro_waveform/Kconfig
+@@ -0,0 +1,5 @@
++menuconfig MODULES_FFTGYRO_WAVEFORM
++	bool "fftgyro_waveform"
++	default n
++	---help---
++		Enable the guarded FFT GYRO rate-setpoint waveform executor.
+diff --git a/src/modules/fftgyro_waveform/module.yaml b/src/modules/fftgyro_waveform/module.yaml
+new file mode 100644
+index 0000000000..623c2baf24
+--- /dev/null
++++ b/src/modules/fftgyro_waveform/module.yaml
+@@ -0,0 +1,11 @@
++module_name: fftgyro_waveform
++
++parameters:
++    - group: FFT GYRO Waveform
++      definitions:
++        FGX_EN:
++            description:
++                short: Enable minimal FFT GYRO motor step executor
++            type: boolean
++            default: 0
++            reboot_required: true

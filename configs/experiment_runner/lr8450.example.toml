@@ -1,0 +1,65 @@
+[instrument]
+model = "LR8450"
+serial_number = ""
+firmware_version = ""
+# Copy all installed unit model names from the instrument screen/nameplates.
+modules = []
+
+[recording]
+# Dynamic motor tests need <=2 ms (>=500 Hz). A slower separate temperature
+# logger is acceptable only if voltage/current/sync remain on the fast logger.
+interval_ms = 0.0
+required_interval_max_ms = 2.0
+local_storage_enabled = false
+storage_destination = ""
+
+[remote]
+# Prefer LAN for Raspberry Pi. USB is also supported by the instrument.
+interface = ""
+address = ""
+communication_commands_enabled = false
+logger_utility_enabled = false
+delimiter = "LF"
+
+[verification]
+manual_start_stop_verified = false
+saved_file_readback_verified = false
+power_cycle_preserves_configuration = false
+remote_identity_verified = false
+remote_start_stop_verified = false
+disconnect_keeps_local_recording = false
+
+[[channel]]
+channel_id = ""
+quantity = "voltage_v"
+input_mode = ""
+unit = "V"
+
+[[channel]]
+channel_id = ""
+quantity = "current_a"
+input_mode = ""
+unit = "A"
+transducer_model = ""
+scale_a_per_unit = 0.0
+
+[[channel]]
+channel_id = ""
+quantity = "motor_temp_c"
+input_mode = ""
+unit = "degC"
+sensor_type = ""
+
+[[channel]]
+channel_id = ""
+quantity = "esc_temp_c"
+input_mode = ""
+unit = "degC"
+sensor_type = ""
+
+[[channel]]
+channel_id = ""
+quantity = "sync"
+input_mode = ""
+unit = "logic"
+electrical_level_verified = false

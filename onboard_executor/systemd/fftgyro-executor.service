@@ -1,0 +1,19 @@
+[Unit]
+Description=FFTGYRO one-shot four-motor experiment executor
+After=multi-user.target
+
+[Service]
+Type=simple
+User=fftgyro
+Group=fftgyro
+SupplementaryGroups=dialout gpio
+ExecStartPre=/usr/local/bin/fftgyro-executor-dispatch validate /etc/fftgyro-executor/run.json
+ExecStart=/usr/local/bin/fftgyro-executor-dispatch run /etc/fftgyro-executor/run.json
+Restart=no
+KillSignal=SIGTERM
+TimeoutStopSec=15s
+StateDirectory=fftgyro-executor
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=multi-user.target

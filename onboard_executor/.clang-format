@@ -1,0 +1,90 @@
+
+BasedOnStyle: Google
+ColumnLimit: 120
+MaxEmptyLinesToKeep: 1
+SortIncludes: CaseSensitive
+IncludeBlocks: Preserve
+
+Standard: c++20
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+AccessModifierOffset: -2
+ConstructorInitializerIndentWidth: 2
+NamespaceIndentation: None
+ContinuationIndentWidth: 2
+IndentCaseLabels: true
+IndentFunctionDeclarationAfterType: false
+
+AlignEscapedNewlinesLeft: false
+AlignTrailingComments: true
+
+AllowAllParametersOfDeclarationOnNextLine: false
+ExperimentalAutoDetectBinPacking: false
+ObjCSpaceBeforeProtocolList: true
+Cpp11BracedListStyle: false
+
+AllowShortBlocksOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortCaseLabelsOnASingleLine: false
+
+AlwaysBreakTemplateDeclarations: true
+AlwaysBreakBeforeMultilineStrings: false
+BreakBeforeBinaryOperators: false
+BreakBeforeTernaryOperators: false
+BreakConstructorInitializersBeforeComma: true
+
+BinPackArguments: false
+BinPackParameters: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+DerivePointerBinding: false
+PointerBindsToType: true
+
+PenaltyExcessCharacter: 50
+PenaltyBreakBeforeFirstCallParameter: 30
+PenaltyBreakComment: 1000
+PenaltyBreakFirstLessLess: 10
+PenaltyBreakString: 100
+PenaltyReturnTypeOnItsOwnLine: 50
+
+SpacesBeforeTrailingComments: 2
+SpacesInParentheses: false
+SpacesInAngles: false
+SpaceInEmptyParentheses: false
+SpacesInCStyleCastParentheses: false
+SpaceAfterCStyleCast: false
+SpaceAfterControlStatementKeyword: true
+SpaceBeforeAssignmentOperators: true
+
+BreakBeforeBraces: Custom
+
+QualifierAlignment: Custom
+QualifierOrder: ["static", "inline", "constexpr", "const", "volatile", "type"]
+
+BraceWrapping:
+  AfterCaseLabel: false
+  AfterClass: true
+  AfterControlStatement: false
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterObjCDeclaration: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: "true"
+  BeforeWhile: false
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+
+AlignAfterOpenBracket: AlwaysBreak
+AlignOperands: true
+FixNamespaceComments: true
+ShortNamespaceLines: 0
+InsertBraces: true
+AllowAllArgumentsOnNextLine: true

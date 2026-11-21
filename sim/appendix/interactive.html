@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ja">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quadrotor Lab · Interactive</title>
+<style>
+:root{color-scheme:light;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;color:#243342;background:#f3f5f7;font-size:14px}*{box-sizing:border-box}body{margin:0}header{height:76px;padding:16px 28px;border-bottom:1px solid #dbe2e8;background:white;display:flex;align-items:center;justify-content:space-between;gap:12px}h1{font-size:20px;margin:0 0 5px;font-weight:650;letter-spacing:.02em}.sub{font-size:12px;color:#657688}.tag{border:1px solid #dce4e8;border-radius:20px;padding:6px 12px;color:#52687c;font-size:12px}main{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;padding:20px;max-width:1800px;margin:auto}.stage{position:relative;background:#ecf1f4;border:1px solid #d4dfe5;border-radius:12px;overflow:hidden;height:calc(100vh - 240px);min-height:380px}#scene{width:100%;height:100%;display:block;cursor:grab;touch-action:none}.hud{position:absolute;left:20px;top:18px;display:flex;gap:24px;pointer-events:none}.hud b{display:block;font-size:25px;font-variant-numeric:tabular-nums;margin-top:5px}.hud span{font-size:11px;color:#64788b}.hud small{font-size:12px;font-weight:400}#badge{position:absolute;right:18px;top:18px;background:white;padding:8px 12px;border-radius:6px;color:#087e9b;font-weight:650}.stage-note{position:absolute;left:18px;bottom:15px;font-size:11px;color:#697e8e;background:#ffffffc9;padding:6px 9px;border-radius:4px}#notice{position:absolute;left:20%;right:20%;top:45%;background:#ffffffed;padding:18px;border-radius:8px;text-align:center;box-shadow:0 4px 20px #26364815;display:none;line-height:1.8}.toolbar{display:flex;gap:8px;align-items:center;margin:12px 0}button,select{font:inherit;border:1px solid #cbd7df;border-radius:6px;background:white;color:#263d50;padding:9px 13px;cursor:pointer}button:hover{background:#eef4f7}button.primary{background:#087e9b;border-color:#087e9b;color:white}button:disabled{opacity:.5;cursor:wait}button.active{background:#087e9b;color:white}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #54b6d4;outline-offset:2px}.toolbar a{font-size:12px;color:#346477;text-decoration:none;padding:9px}.right{display:flex;flex-direction:column;gap:14px}.card{background:white;border:1px solid #dce3e9;border-radius:10px;padding:17px}h2{font-size:13px;font-weight:650;margin:0 0 14px}.field{margin:12px 0}.field label{display:flex;justify-content:space-between;margin-bottom:8px;font-size:12px}.field select{width:100%;font-size:12px}input[type=range]{width:100%;accent-color:#087e9b}.muted{font-size:11px;line-height:1.8;color:#738393}.motor{display:grid;grid-template-columns:27px 1fr 56px;gap:8px;align-items:center;font-size:11px;margin:9px 0}.bar{height:5px;background:#edf1f4;border-radius:3px;overflow:hidden}.bar i{display:block;height:100%;background:#087e9b}.motor strong{text-align:right;font-size:13px;font-variant-numeric:tabular-nums}.angles{display:flex;justify-content:space-between;font-size:11px;margin:15px 0 5px}.angles b{font-size:15px;display:block;margin-top:5px;font-variant-numeric:tabular-nums}.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.keys button{padding:9px 3px;touch-action:none;font-size:11px}.keys button strong{display:block;font-size:16px;margin-bottom:3px}.keys .space{grid-column:span 4}.chart{height:96px;background:white;border:1px solid #dce3e9;border-radius:8px;position:relative;padding:8px}#chart{width:100%;height:100%}.chart-label{position:absolute;top:8px;left:12px;font-size:10px;color:#54707b}.statusbar{font-size:11px;color:#738393;display:flex;justify-content:space-between;padding:8px 2px}.settings-note{margin:7px 0 0}.dot{display:inline-block;width:7px;height:7px;background:#087e9b;border-radius:50%;margin-right:5px}@media(max-width:900px){main{grid-template-columns:1fr;padding:12px}.stage{height:52vh;min-height:330px}.right{display:grid;grid-template-columns:1fr 1fr}.right .card:last-child{grid-column:span 2}.hud{gap:15px}.hud b{font-size:20px}header{padding:12px 16px}.tag{display:none}}@media(max-width:500px){.right{grid-template-columns:1fr}.right .card:last-child{grid-column:span 1}.toolbar{flex-wrap:wrap}.hud{top:60px}#notice{left:8%;right:8%}}
+</style>
+<header><div><h1>Quadrotor Lab</h1><div class="sub">風洞同定モデルを、自分で飛ばす。</div></div><span class="tag">ローカル計算 · 6自由度 · 生成RPM</span></header>
+<main>
+<section>
+ <div class="stage">
+  <canvas id="scene" aria-label="機体の姿勢と飛行軌跡を表示する3Dビュー"></canvas>
+  <div class="hud"><div><span>高度</span><b id="height">2.00 <small>m</small></b></div><div><span>対地速度</span><b id="speed">0.00 <small>m/s</small></b></div><div><span>対気速度</span><b id="air">0.00 <small>m/s</small></b></div></div>
+  <div id="badge">同定モデル</div><div id="notice"></div>
+  <div class="stage-note">ドラッグ：視点 ／ ホイール：拡大 · グリッド 1 m · 橙色が機首 · 機体表示2倍</div>
+ </div>
+ <div class="toolbar"><button class="primary" id="play">▶ 開始</button><button id="reset">リセット</button><button id="camera">視点を戻す</button><a id="csv" href="/trace.csv" download="quadrotor-flight.csv">CSV保存 ↓</a><a href="/session.json" download="quadrotor-session.json">計算条件 ↓</a></div>
+ <div class="chart"><div class="chart-label">直近20秒　<span style="color:#087e9b">━ 速度 [m/s]</span>　<span style="color:#b4783b">━ 高度 [m]</span></div><canvas id="chart" aria-label="速度と高度の時系列"></canvas></div>
+ <div class="statusbar"><span id="clock">計算時間 0.00 s</span><span id="performance">待機中</span></div>
+</section>
+<aside class="right">
+ <div class="card"><h2>モデルと飛行条件</h2>
+  <div class="field"><label for="model">荷重モデル</label><select id="model"><option value="identified">同定モデル（Gray-box）</option><option value="existing">既存モデル（回転数二乗）</option></select></div>
+  <div class="field"><label for="route">同定係数の学習経路</label><select id="route"><option value="command_route">指令・電圧 → 推算RPM</option><option value="measured">実測RPM</option></select></div>
+  <div class="muted">変更すると2 mのホバーから再開。計算中のRPMは両モデルとも指令から生成します。</div>
+  <div class="field"><label for="controlMode">操縦モード</label><select id="controlMode"><option value="velocity">速度・高度保持（WASD）</option><option value="attitude">Mode 2 · 姿勢＋推力（高度保持なし）</option></select></div>
+  <div class="muted" id="modeHint">キーを離すと減速し、高度と方位を保ちます。</div>
+  <div class="field"><label for="targetSpeed">移動速度の指令 <b id="targetSpeedValue">2.0 m/s</b></label><input id="targetSpeed" type="range" min="0.5" max="5" step="0.5" value="2"></div>
+  <div class="field"><label for="wind">風速 <b id="windValue">0.0 m/s</b></label><input id="wind" type="range" min="0" max="8" step="0.5" value="0"></div>
+  <div class="field"><label for="windHeading">風の進む向き <b id="windHeadingValue">+X</b></label><input id="windHeading" type="range" min="-180" max="180" step="15" value="0"></div>
+  <div class="muted">風は時定数2秒で変化。0°は+X向き、90°は+Y向きです。電圧16 V。</div>
+ </div>
+ <div class="card"><h2>コントローラー / USBプロポ</h2>
+  <div class="muted" id="padStatus">USBまたはBluetoothで接続し、コントローラーのボタンを一度押してください。</div>
+  <div class="field"><select id="padSelect" aria-label="接続コントローラー"><option value="">接続を待っています</option></select></div>
+  <button id="padUse">コントローラーで操縦する</button>
+  <div id="stickReadout" class="muted" style="margin-top:10px">左：推力 / Yaw　右：Pitch / Roll</div>
+  <details style="margin-top:12px"><summary class="muted">軸割り当て・反転（プロポはこちら）</summary>
+   <div id="axisSettings"></div><div class="muted">PSの標準割り当てを初期値にしています。USBプロポはスティックを動かし、下の生値を見て割り当ててください。</div><div class="muted" id="rawAxes" style="word-break:break-word">—</div>
+  </details>
+  <div class="muted" style="margin-top:10px">推力スティックの中央がホバー相当です。プロポはスロットルを中央にして開始。PSボタン9（Options/Start）で一時停止・再開。</div>
+ </div>
+ <div class="card"><h2>操作 <span class="muted">キー / 押し続けるボタン</span></h2>
+  <div class="keys">
+   <button data-key="KeyQ"><strong>Q</strong>左旋回</button><button data-key="KeyW"><strong>W</strong>前進</button><button data-key="KeyE"><strong>E</strong>右旋回</button><button data-key="ArrowUp"><strong>↑</strong>上昇</button>
+   <button data-key="KeyA"><strong>A</strong>左移動</button><button data-key="KeyS"><strong>S</strong>後退</button><button data-key="KeyD"><strong>D</strong>右移動</button><button data-key="ArrowDown"><strong>↓</strong>下降</button>
+   <button class="space" id="brake">Space · スティックを中立に戻す</button>
+  </div><p class="muted settings-note">P：一時停止 ／ R：リセット。左右移動は機首方向が基準。キーを離すと速度指令は0になります。</p>
+ </div>
+ <div class="card"><h2>機体の状態</h2><div id="motors"></div><div class="angles"><div>Roll<b id="roll">0.0°</b></div><div>Pitch<b id="pitch">0.0°</b></div><div>Yaw<b id="yaw">0.0°</b></div></div><div class="muted" id="targets">目標高度 2.0 m</div><div class="muted" id="saturation"></div>
+  <details class="muted" style="margin-top:12px"><summary>この計算について</summary><p>共通の速度・高度・姿勢制御器で動かします。PX4ではありません。荷重係数は論文の採用版、モーターは11/11校正・一次遅れ55.6 ms。Roll補正はPitchから流用します。</p><p>機体は各モデルのホバー釣り合いから開始します。これは操作できる計算例であり、実機の正解軌道との比較ではありません。姿勢・速度が計算範囲を超えると、その時点で停止します。</p></details>
+ </div>
+</aside>
+</main>
+<script>
+const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d');
+let state=null,running=false,busy=false,resetting=false,trail=[],samples=[],keys=new Set(),lastSample=-1,epoch=0;
+let padEnabled=false,padInput={forward:0,right:0,climb:0,yaw:0},pausePressed=false,padSignature='';
+let camera={angle:-2.2,elevation:.54,distance:13},focus=[0,0,1],lastFrame=performance.now();
+const movers=['KeyW','KeyA','KeyS','KeyD','KeyQ','KeyE','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'];
+const vec={add:(a,b)=>a.map((x,i)=>x+b[i]),sub:(a,b)=>a.map((x,i)=>x-b[i]),mul:(a,k)=>a.map(x=>x*k),dot:(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0),cross:(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],norm:a=>Math.hypot(...a)};
+const unit=a=>vec.mul(a,1/vec.norm(a));
+for(let i=1;i<=4;i++)$('motors').insertAdjacentHTML('beforeend',`<div class="motor"><span>M${i}</span><div class="bar"><i id="bar${i}"></i></div><strong id="rpm${i}">—</strong></div>`);
+function clearKeys(){keys.clear();document.querySelectorAll('[data-key]').forEach(b=>b.classList.remove('active'));}
+const mapping=[['climb','推力',1,true],['yaw','Yaw',0,false],['forward','Pitch（前進）',3,true],['right','Roll（右）',2,false]];
+for(const [key,label,axis,invert] of mapping){$('axisSettings').insertAdjacentHTML('beforeend',`<div class="field"><label>${label}<span><input type="checkbox" id="invert-${key}" ${invert?'checked':''}>反転</span></label><select id="axis-${key}" aria-label="${label}の軸">${Array.from({length:12},(_,i)=>`<option value="${i}" ${i===axis?'selected':''}>Axis ${i}</option>`).join('')}</select></div>`);}
+function modeChanged(){const manual=$('controlMode').value==='attitude';$('modeHint').textContent=manual?'右スティックで最大25°の姿勢、左で推力・Yawを指令。中立は水平・ホバー相当推力。位置・高度は保持しません。':'キーを離すと減速し、高度と方位を保ちます。';$('targetSpeed').disabled=manual;reset();}
+$('controlMode').onchange=modeChanged;
+$('padUse').onclick=()=>{padEnabled=!padEnabled;if(padEnabled){$('controlMode').value='attitude';modeChanged();}$('padUse').textContent=padEnabled?'キーボード操作に戻す':'コントローラーで操縦する';};
+function gamepad(){const pads=Array.from(navigator.getGamepads?navigator.getGamepads():[]).filter(Boolean),signature=pads.map(p=>p.index+':'+p.id).join('|');if(signature!==padSignature){const old=$('padSelect').value;$('padSelect').innerHTML=pads.length?pads.map(p=>{const o=document.createElement('option');o.value=p.index;o.textContent=p.id;return o.outerHTML;}).join(''):'<option value="">接続を待っています</option>';if(pads.some(p=>String(p.index)===old))$('padSelect').value=old;padSignature=signature;}
+ const p=pads.find(p=>String(p.index)===$('padSelect').value);if(!p){if(padEnabled){pause();padEnabled=false;$('padUse').textContent='コントローラーで操縦する';}$('padStatus').textContent='接続後、コントローラーのボタンを一度押してください。';return;}
+ $('padStatus').textContent=`認識済み · ${p.axes.length}軸 / ${p.buttons.length}ボタン${padEnabled?' · 操縦中':''}`;
+ $('rawAxes').textContent=p.axes.map((v,i)=>`${i}: ${v.toFixed(2)}`).join(' ／ ');
+ let valid=true;for(const [key] of mapping){const axis=Number($('axis-'+key).value);if(axis>=p.axes.length){valid=false;padInput[key]=0;continue;}let v=p.axes[axis]*($('invert-'+key).checked?-1:1);v=Math.abs(v)<.08?0:Math.sign(v)*(Math.abs(v)-.08)/.92;padInput[key]=.7*v+.3*v*v*v;}
+ $('stickReadout').textContent=`推力 ${padInput.climb.toFixed(2)} ／ Yaw ${padInput.yaw.toFixed(2)} ／ Pitch ${padInput.forward.toFixed(2)} ／ Roll ${padInput.right.toFixed(2)}`;
+ if(!valid&&padEnabled){pause();$('padStatus').textContent='軸割り当てが範囲外です。設定を変更してください。';}
+ const pressed=p.buttons[9]?.pressed||false;if(padEnabled&&pressed&&!pausePressed)$('play').click();pausePressed=pressed;
+}
+function pause(){running=false;clearKeys();$('play').textContent='▶ 再開';}
+function accept(s){state=s;if(s.time>lastSample){trail.push([s.position[0],s.position[1],-s.position[2]]);if(trail.length>12000)trail.shift();samples.push([s.time,Math.hypot(...s.velocity),-s.position[2]]);samples=samples.filter(a=>a[0]>s.time-20);lastSample=s.time;}
+ $('height').innerHTML=`${(-s.position[2]).toFixed(2)} <small>m</small>`;$('speed').innerHTML=`${Math.hypot(...s.velocity).toFixed(2)} <small>m/s</small>`;$('air').innerHTML=`${Math.hypot(...s.velocity.map((v,i)=>v-s.wind[i])).toFixed(2)} <small>m/s</small>`;
+ ['roll','pitch','yaw'].forEach((id,i)=>$(id).textContent=s.angles[i].toFixed(1)+'°');
+ s.rpm.forEach((v,i)=>{$('rpm'+(i+1)).textContent=Math.round(v);$('bar'+(i+1)).style.width=Math.min(100,v/9000*100)+'%';});
+ $('targets').textContent=$('controlMode').value==='attitude'?'姿勢＋推力操縦 · 高度保持なし':`目標高度 ${s.height_target.toFixed(1)} m ／ 方位 ${((s.heading_target%360+360)%360).toFixed(0)}°`;
+ $('saturation').textContent=[s.torque_saturated?'姿勢制御のモーメント上限':null,s.motor_saturated?'モーター指令の上限 / 下限':null].filter(Boolean).join(' ／ ');$('clock').textContent=`計算時間 ${s.time.toFixed(2)} s`;
+ $('badge').textContent=s.model==='identified'?'同定モデル':'既存モデル';$('badge').style.color=s.model==='identified'?'#087e9b':'#b4783b';
+ if(!['running','ready'].includes(s.status)){pause();$('notice').textContent=s.status;$('notice').style.display='block';$('play').disabled=true;}
+}
+async function api(path,body){const r=await fetch(path,{method:body?'POST':'GET',headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});const j=await r.json();if(!r.ok)throw Error(j.error||r.statusText);return j;}
+async function reset(){if(resetting)return;resetting=true;pause();epoch++;$('play').disabled=true;$('notice').textContent='ホバーの釣り合いを計算中…';$('notice').style.display='block';
+ try{while(busy)await new Promise(r=>setTimeout(r,20));const s=await api('/reset',{model:$('model').value,route:$('route').value});trail=[];samples=[];lastSample=-1;focus=[0,0,1];$('wind').value=0;updateSliders();accept(s);$('notice').style.display='none';$('play').disabled=false;$('play').textContent='▶ 開始';}catch(e){failure(e);}finally{resetting=false;}}
+function failure(e){pause();$('notice').textContent='接続・計算エラー: '+e.message;$('notice').style.display='block';}
+$('play').onclick=()=>{if(running)pause();else if(state&&['ready','running'].includes(state.status)){running=true;$('play').textContent='Ⅱ 一時停止';}};
+$('reset').onclick=reset;$('model').onchange=reset;$('route').onchange=reset;$('camera').onclick=()=>camera={angle:-2.2,elevation:.54,distance:13};$('brake').onclick=()=>{clearKeys();if(padEnabled)pause();};
+function updateSliders(){$('targetSpeedValue').textContent=Number($('targetSpeed').value).toFixed(1)+' m/s';$('windValue').textContent=Number($('wind').value).toFixed(1)+' m/s';$('windHeadingValue').textContent=$('windHeading').value+'°';}
+['targetSpeed','wind','windHeading'].forEach(id=>$(id).oninput=updateSliders);
+document.querySelectorAll('[data-key]').forEach(b=>{b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);keys.add(b.dataset.key);b.classList.add('active');};const end=()=>{keys.delete(b.dataset.key);b.classList.remove('active');};b.onpointerup=end;b.onpointercancel=end;b.onlostpointercapture=end;});
+window.addEventListener('keydown',e=>{if(['INPUT','SELECT'].includes(document.activeElement.tagName))return;if(movers.includes(e.code)){e.preventDefault();keys.add(e.code);}else if(e.code==='Space'){e.preventDefault();clearKeys();}else if(!e.repeat&&e.code==='KeyP')$('play').click();else if(!e.repeat&&e.code==='KeyR')reset();});
+window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',pause);document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
+async function tick(){if(running&&!busy&&!resetting){busy=true;const version=epoch,t=performance.now();try{const controls=padEnabled?padInput:{forward:Number(keys.has('KeyW'))-Number(keys.has('KeyS')),right:Number(keys.has('KeyD'))-Number(keys.has('KeyA')),climb:Number(keys.has('ArrowUp'))-Number(keys.has('ArrowDown')),yaw:Number(keys.has('KeyE')||keys.has('ArrowRight'))-Number(keys.has('KeyQ')||keys.has('ArrowLeft'))};const s=await api('/step',{...controls,mode:$('controlMode').value,speed:Number($('targetSpeed').value),wind:Number($('wind').value),wind_heading:Number($('windHeading').value)});if(version===epoch){accept(s);$('performance').textContent=`200 Hz積分 · 実時間比 ${Math.min(1,50/(performance.now()-t)).toFixed(2)}×`;}}catch(e){failure(e);}finally{busy=false;}const delay=Math.max(0,50-(performance.now()-t));setTimeout(tick,delay);}else setTimeout(tick,50);}
+let dragging=null;canvas.onpointerdown=e=>{dragging=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId);};canvas.onpointermove=e=>{if(!dragging)return;camera.angle-=(e.clientX-dragging[0])*.006;camera.elevation=Math.max(.12,Math.min(1.4,camera.elevation+(e.clientY-dragging[1])*.005));dragging=[e.clientX,e.clientY];};canvas.onpointerup=()=>dragging=null;canvas.onpointercancel=()=>dragging=null;canvas.onwheel=e=>{e.preventDefault();camera.distance=Math.max(3,Math.min(50,camera.distance*Math.exp(e.deltaY*.001)));};
+function resize(c){const d=Math.min(devicePixelRatio||1,2),w=c.clientWidth,h=c.clientHeight;if(c.width!==Math.round(w*d)||c.height!==Math.round(h*d)){c.width=Math.round(w*d);c.height=Math.round(h*d);}const cx=c.getContext('2d');cx.setTransform(d,0,0,d,0,0);return [w,h,cx];}
+function draw(){gamepad();const [w,h]=resize(canvas);ctx.clearRect(0,0,w,h);const dt=Math.min(.1,(performance.now()-lastFrame)/1000);lastFrame=performance.now();
+ if(state){const p=[state.position[0],state.position[1],Math.max(.5,-state.position[2]*.6)];focus=focus.map((f,i)=>f+(p[i]-f)*(1-Math.exp(-dt*3)));}
+ const ce=Math.cos(camera.elevation),se=Math.sin(camera.elevation),eye=vec.add(focus,[camera.distance*ce*Math.cos(camera.angle),camera.distance*ce*Math.sin(camera.angle),camera.distance*se]);
+ const f=unit(vec.sub(focus,eye)),right=unit(vec.cross(f,[0,0,1])),up=vec.cross(right,f),focal=Math.min(w,h)*1.15;
+ const project=p=>{const v=vec.sub(p,eye),z=vec.dot(v,f);return z>.15?[w/2+focal*vec.dot(v,right)/z,h*.55-focal*vec.dot(v,up)/z,z]:null;};
+ function line(a,b,color,width=1){a=project(a);b=project(b);if(!a||!b)return;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();}
+ const gx=Math.round(focus[0]),gy=Math.round(focus[1]);for(let i=-24;i<=24;i++){const alpha=Math.max(.02,.18-Math.abs(i)*.005);line([gx+i,gy-24,0],[gx+i,gy+24,0],`rgba(111,135,150,${alpha})`);line([gx-24,gy+i,0],[gx+24,gy+i,0],`rgba(111,135,150,${alpha})`);}
+ line([0,0,0],[4,0,0],'#c99263',2);line([0,0,0],[0,4,0],'#6f9daf',2);for(const [p,label] of [[[4.3,0,0],'+X'],[[0,4.3,0],'+Y']]){const a=project(p);if(a){ctx.fillStyle='#6f8190';ctx.font='12px sans-serif';ctx.fillText(label,a[0],a[1]);}}
+ if(state){const p=[state.position[0],state.position[1],-state.position[2]],r=state.rotation;
+ const body=b=>vec.add(p,[r[0].reduce((s,x,i)=>s+x*b[i],0),r[1].reduce((s,x,i)=>s+x*b[i],0),-r[2].reduce((s,x,i)=>s+x*b[i],0)]);
+ for(let i=1;i<trail.length;i++)line(trail[i-1],trail[i],state.model==='identified'?'#13899c8a':'#bc834e8a',2);
+ line([p[0],p[1],0],p,'#8ba5b880');const foot=project([p[0],p[1],.01]);if(foot){ctx.beginPath();ctx.ellipse(foot[0],foot[1],Math.max(8,60/foot[2]),Math.max(3,22/foot[2]),0,0,Math.PI*2);ctx.fillStyle='#243d571a';ctx.fill();}
+ // Render at 2× physical size to make orientation readable; trajectory/grid stay metric.
+ const arm=.5,rotor=.23,motor=[[-arm,arm,0],[arm,-arm,0],[arm,arm,0],[-arm,-arm,0]];
+ line(body([-arm,-arm,0]),body([arm,arm,0]),'#344b60',5);line(body([-arm,arm,0]),body([arm,-arm,0]),'#344b60',5);
+ motor.map((b,i)=>({b,i,z:project(body(b))?.[2]||0})).sort((a,b)=>b.z-a.z).forEach(({b,i})=>{const a=project(body(b));if(!a)return;ctx.beginPath();for(let k=0;k<=32;k++){const t=k*Math.PI/16,q=project(body([b[0]+rotor*Math.cos(t),b[1]+rotor*Math.sin(t),-.03]));if(q)k?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);}ctx.fillStyle=b[0]>0?'#d8a87a40':'#277e9940';ctx.fill();ctx.strokeStyle=b[0]>0?'#b67d46':'#2a718a';ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle='#324f62';ctx.beginPath();ctx.arc(a[0],a[1],3,0,7);ctx.fill();});
+ line(body([-.15,0,-.05]),body([.3,0,-.05]),'#344b60',12);line(body([.16,0,-.06]),body([.42,0,-.06]),'#da9750',6);
+ if(Math.hypot(...state.wind)>.05){const base=[p[0]-2,p[1]-2,.3],end=vec.add(base,vec.mul([state.wind[0],state.wind[1],0],.3));line(base,end,'#748d75',3);const ep=project(end);if(ep){ctx.fillStyle='#5f7960';ctx.font='11px sans-serif';ctx.fillText(`風 ${Math.hypot(...state.wind).toFixed(1)} m/s`,ep[0]+5,ep[1]);}}
+ }
+ const [cw,ch,cc]=resize($('chart'));cc.clearRect(0,0,cw,ch);const max=Math.max(3,...samples.flatMap(a=>a.slice(1)))*1.1,tEnd=state?.time||0;cc.font='10px sans-serif';cc.fillStyle='#84919c';cc.fillText(max.toFixed(1),cw-25,22);cc.fillText('0',cw-15,ch-4);cc.strokeStyle='#e2e8ed';cc.beginPath();cc.moveTo(0,ch-10);cc.lineTo(cw,ch-10);cc.stroke();[1,2].forEach((j)=>{cc.beginPath();samples.forEach((a,i)=>{const x=(a[0]-(tEnd-20))/20*(cw-30),y=ch-10-a[j]/max*(ch-28);i?cc.lineTo(x,y):cc.moveTo(x,y);});cc.strokeStyle=j===1?'#087e9b':'#b4783b';cc.lineWidth=1.8;cc.stroke();});
+ requestAnimationFrame(draw);
+}
+api('/state').then(accept).catch(failure);draw();tick();
+</script>
+</html>

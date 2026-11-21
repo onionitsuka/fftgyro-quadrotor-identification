@@ -1,0 +1,157 @@
+{
+  "schema": "fftgyro-axis-session-v1",
+  "session_id": "example-pitch-collective-compensation",
+  "role": "PILOT",
+  "repetition": 1,
+  "wind_m_s": 0,
+  "heading_deg": 0,
+  "fixed_pitch_deg": 0,
+  "runtime_qualified": false,
+  "maximum_duration_s": 100,
+  "transition_rate_deg_s": 2.5,
+  "preparation_hold_s": 1,
+  "hardware": {
+    "uart_device": "/dev/serial0",
+    "target_system": 1,
+    "target_component": 1,
+    "axis_mix": [
+      1,
+      -1,
+      1,
+      -1
+    ],
+    "motor_min": 0,
+    "motor_max": 0.8,
+    "startup_ramp_rate": 0.01875,
+    "normal_ramp_rate": 0.1,
+    "abort_ramp_rate": 0.1,
+    "log_directory": "/home/fftgyro/research-data/fftgyro/example",
+    "non_target_pid_enabled": false,
+    "motor_mapping_verified": true,
+    "feedback_frame_verified": true,
+    "stop_verified": true,
+    "rpm_logging_verified": true,
+    "load_logging_verified": true,
+    "sync_verified": true,
+    "mechanically_locked_verified": false
+  },
+  "control_mode": "AXIS_PID",
+  "pid": {
+    "axis": "PITCH",
+    "law": "ANGLE_RATE_PID",
+    "cascade": {
+      "attitude_kp": 6,
+      "kp": 0.2,
+      "ki": 0.3,
+      "kd": 0,
+      "torque_to_delta": 0.7071067811865476,
+      "target_rate_limit_deg_s": 30,
+      "derivative_cutoff_hz": 10,
+      "trajectory_rate_feedforward": 0,
+      "collective_gain_compensation": {
+        "enabled": true,
+        "reference_collective": 0.1,
+        "thrust_curve_linear": 4.70821757,
+        "thrust_curve_quadratic": 9.661238,
+        "command_min": 0.1,
+        "command_max": 0.8,
+        "source": "Example coefficients; calibrate for the intended apparatus.",
+        "fit": "Fz_tare_corrected = a*u + b*u^2, no intercept, eight points 0.1..0.8, RMSE 0.06412 N; not independent validation",
+        "low_collective_policy": "scale=1 below reference_collective; no extrapolated boost"
+      }
+    },
+    "additional_limits_enabled": true,
+    "motor_slew_time_s": 0,
+    "zero_quaternion_wxyz": [
+      1,
+      0,
+      0,
+      0
+    ],
+    "zero_angle_deg": 0,
+    "kp": 0,
+    "ki": 0,
+    "kd": 0,
+    "integral_limit": 0.2,
+    "differential_limit": 0.3,
+    "angle_min_deg": -90,
+    "angle_max_deg": 90,
+    "rate_limit_deg_s": 60,
+    "swing_limit_deg": 90,
+    "tracking_limit_deg": 90,
+    "feedback_timeout_s": 0.1,
+    "saturation_timeout_s": 2
+  },
+  "settling": {
+    "error_deg": 5,
+    "rate_deg_s": 5,
+    "window_s": 0.15,
+    "dwell_s": 0.5,
+    "maximum_hold_s": 5
+  },
+  "startup": {
+    "ramp_shape": "QUINTIC",
+    "minimum_duration_s": 16,
+    "capture_reference": true,
+    "reference_dwell_s": 0.3,
+    "integral_enable_collective": 0.1,
+    "control_ready_verified": false
+  },
+  "shutdown": {
+    "minimum_duration_s": 3,
+    "external_fade_s": 0.5
+  },
+  "segments": [
+    {
+      "condition_id": "synthetic-example",
+      "segment_id": "prepare-01",
+      "hold_id": "prepare-01",
+      "kind": "HOLD",
+      "duration_s": 1,
+      "start_deg": 0,
+      "collective": 0.3,
+      "require_settled": true,
+      "preparation_only": true
+    },
+    {
+      "condition_id": "synthetic-example",
+      "segment_id": "move-pos30",
+      "kind": "MOVE",
+      "duration_s": 12,
+      "start_deg": 0,
+      "end_deg": 30,
+      "collective": 0.3
+    },
+    {
+      "condition_id": "synthetic-example",
+      "segment_id": "hold-pos30",
+      "hold_id": "hold-pos30",
+      "kind": "HOLD",
+      "duration_s": 5,
+      "start_deg": 30,
+      "collective": 0.3,
+      "require_settled": true,
+      "analysis_start_s": 1,
+      "analysis_end_s": 5
+    },
+    {
+      "condition_id": "synthetic-example",
+      "segment_id": "move-zero",
+      "kind": "MOVE",
+      "duration_s": 12,
+      "start_deg": 30,
+      "end_deg": 0,
+      "collective": 0.3
+    },
+    {
+      "condition_id": "synthetic-example",
+      "segment_id": "final-hold-01",
+      "hold_id": "final-hold-01",
+      "kind": "HOLD",
+      "duration_s": 5,
+      "start_deg": 0,
+      "collective": 0.3,
+      "require_settled": true
+    }
+  ]
+}

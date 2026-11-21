@@ -1,0 +1,43 @@
+{
+  "schema": "normalized-freeflight-coverage-v1",
+  "note": "Template only. No actual flight has been assessed. Flight-readiness flags start false; the separately confirmed historical channel mapping is retained below.",
+  "rpm_input_mapping": {
+    "channel_to_motor": {"1": 2, "2": 4, "3": 3, "4": 1},
+    "confirmed_by_operator": true,
+    "confirmation_date": "2026-10-20",
+    "provenance": "Operator confirmed all aircraft/channel assignments unchanged from previous experiments. Mapping matches scripts/audit_dynamic_identifiability.py and fit_sun_dynamic_pitch.py.",
+    "application": "For raw-data adapter: reorder channels once into motor order. Normalized rpm1..rpm4 already denote M1..M4; do not reorder them again.",
+    "pulses_per_revolution_verified_by_this_confirmation": false
+  },
+  "normalization_contract": {
+    "time_s": "Common monotonic timeline in seconds; never align solely by filenames or wall clock.",
+    "required_flags": ["airborne", "mocap_valid", "usable"],
+    "flag_encoding": "Numeric 0/1. usable excludes documented acquisition defects, not model residuals.",
+    "position": "Motive mm must be converted to m; verify rigid-body point, world and body frame transforms.",
+    "angles": "roll_deg,pitch_deg,yaw_deg from correctly transformed MoCap quaternion, not PX4 Euler yaw substituted as truth.",
+    "rates": "p_deg_s,q_deg_s,r_deg_s are BODY angular rates, not Euler angle derivatives. Transform and synchronize the gyro.",
+    "velocity": "speed_m_s is horizontal ground speed magnitude; vz_m_s is NED vertical velocity; u_air_m_s is body-forward aircraft airspeed, R_NED_to_FRD*(v_ground-v_wind). No arbitrary beta at zero speed.",
+    "differentiation": "Document source capture rate, filtering and latency. 120-Hz export of 60-Hz capture is not independent 120-Hz observation. Do not differentiate across gaps.",
+    "rpm": "rpm1..rpm4 are measured RPM with verified pulses/revolution and motor mapping, not motor output or an estimate.",
+    "commands": "command1..command4 are normalized actual motor commands in [0,1]; voltage_v is measured battery voltage.",
+    "flight_identity": "recording_key identifies one physical flight, e.g. FC UID + boot epoch + flight UUID. Multiple sensor files or copied logs do not count as repeats.",
+    "excluded_claims": "Coverage does not establish model accuracy, transport reliability or permission to fly. No raw-file adapter or model fit is implemented here."
+  },
+  "rules": {
+    "repeat_flights": 2,
+    "max_gap_s": 0.1,
+    "max_sync_uncertainty_ms": 10.0
+  },
+  "flights": [
+    {
+      "flight_id": "replace-with-flight-id",
+      "recording_key": "replace-with-unique-physical-flight-key",
+      "csv": "replace-with-normalized-flight.csv",
+      "frames_verified": false,
+      "sync_verified": false,
+      "sync_uncertainty_ms": null,
+      "rpm_calibration_verified": false,
+      "command_mapping_verified": false
+    }
+  ]
+}

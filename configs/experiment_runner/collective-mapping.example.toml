@@ -1,0 +1,16 @@
+[vehicle]
+# Measure the complete FFT GYRO test article, including fixture-mounted aircraft parts.
+mass_kg = 0.0
+gravity_mps2 = 9.80665
+
+[operation]
+voltage_v = 15.7
+current_limit_a = 0.0
+max_command = 0.8
+motor_ids = ["motor_1", "motor_2", "motor_3", "motor_4"]
+hover_percentages = [60.0, 75.0, 90.0, 105.0]
+
+[data]
+# CSV columns: motor_id,voltage_v,command,thrust_n,rpm,current_a
+steady_curve_csv = "evidence/motor-steady-curve.csv"
+voltage_tolerance_v = 0.1

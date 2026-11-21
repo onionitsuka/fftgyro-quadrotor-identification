@@ -1,0 +1,50 @@
+4-channel RPM receiver - illustrative switch models, not vendor validation
+Vcc vcc 0 5
+.model SENSOR SW(Ron=10 Roff=1e12 Vt=2.5 Vh=0)
+.model HCBEHAV SW(Ron=1 Roff=1e12 Vt=2.5 Vh=0.5)
+Vdrive1 drive1 0 PULSE(0 5 120u 10n 10n 200u 500u)
+Vglitch1 glitch1 0 PULSE(0 5 4600u 1n 1n 100n 10m)
+Bctrl1 ctrl1 0 V=V(drive1)+V(glitch1)
+Ssens1 raw1 0 ctrl1 0 SENSOR
+RP1 vcc raw1 4.7k
+RI1 raw1 rc1 1k
+CF1 rc1 0 1n
+Shc1 out1 0 rc1 0 HCBEHAV
+Rlogic1 vcc out1 1k
+RO1 out1 nano1 100
+Cload1 nano1 0 10p
+Vdrive2 drive2 0 PULSE(0 5 140u 10n 10n 200u 500u)
+Vglitch2 glitch2 0 PULSE(0 5 4600u 1n 1n 100n 10m)
+Bctrl2 ctrl2 0 V=V(drive2)+V(glitch2)
+Ssens2 raw2 0 ctrl2 0 SENSOR
+RP2 vcc raw2 4.7k
+RI2 raw2 rc2 1k
+CF2 rc2 0 1n
+Shc2 out2 0 rc2 0 HCBEHAV
+Rlogic2 vcc out2 1k
+RO2 out2 nano2 100
+Cload2 nano2 0 10p
+Vdrive3 drive3 0 PULSE(0 5 160u 10n 10n 200u 500u)
+Vglitch3 glitch3 0 PULSE(0 5 4600u 1n 1n 100n 10m)
+Bctrl3 ctrl3 0 V=V(drive3)+V(glitch3)
+Ssens3 raw3 0 ctrl3 0 SENSOR
+RP3 vcc raw3 4.7k
+RI3 raw3 rc3 1k
+CF3 rc3 0 1n
+Shc3 out3 0 rc3 0 HCBEHAV
+Rlogic3 vcc out3 1k
+RO3 out3 nano3 100
+Cload3 nano3 0 10p
+Vdrive4 drive4 0 PULSE(0 5 180u 10n 10n 200u 500u)
+Vglitch4 glitch4 0 PULSE(0 5 4600u 1n 1n 100n 10m)
+Bctrl4 ctrl4 0 V=V(drive4)+V(glitch4)
+Ssens4 raw4 0 ctrl4 0 SENSOR
+RP4 vcc raw4 4.7k
+RI4 raw4 rc4 1k
+CF4 rc4 0 1n
+Shc4 out4 0 rc4 0 HCBEHAV
+Rlogic4 vcc out4 1k
+RO4 out4 nano4 100
+Cload4 nano4 0 10p
+.tran 0.05u 5m 0 0.05u
+.end

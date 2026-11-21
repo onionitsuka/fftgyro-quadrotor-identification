@@ -1,0 +1,8 @@
+{
+  "max_receive_gap_ms": 100.0,
+  "max_clock_bound_ms": 20.0,
+  "max_rpm_edge_gap_ms": 500.0,
+  "max_saturation_fraction": 0.05,
+  "static_windows_s": [[5, 15]],
+  "max_static_rate_deg_s": 0.5
+}

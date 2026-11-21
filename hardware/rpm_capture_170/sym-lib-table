@@ -1,0 +1,1 @@
+(sym_lib_table (lib (name "RPM") (type "KiCad") (uri "${KIPRJMOD}/RPM.kicad_sym") (options "") (descr "Project-local symbols")))

@@ -1,0 +1,110 @@
+# Python caches and build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.pytest-*/
+.pytest_*/
+.test-tmp-*/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+/onboard_executor/build-*/
+/output/
+
+# Local experiment/test diagnostics and generated previews
+/.campaign-audit-*/
+/.fftgyro-connection-check-*/
+/.fftgyro-last-check-dir
+/.final-plan-preview*.png
+/.tmp/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# Local configuration
+*.local.*
+configs/local/
+
+# Instrument-specific experiment-runner settings; retain only shareable templates.
+configs/experiment_runner/*.toml
+!configs/experiment_runner/*.example.toml
+!configs/experiment_runner/wind-conditions.toml
+!configs/experiment_runner/fftgyro-thesis-plan.toml
+
+# Raw and processed research data
+data/raw/
+data/processed/
+data/private/
+research-data/
+raw/
+processed/
+
+# Experiment data and large/private binary formats
+*.ulg
+*.bag
+*.mcap
+*.csv
+*.mat
+*.h5
+*.hdf5
+*.npy
+*.npz
+
+# Documents and archives likely to contain private material
+*.pdf
+*.ppt
+*.pptx
+*.key
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar
+
+# LaTeX intermediate files (keep source .tex files)
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Videos
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# PX4 checkout/vendor directories
+PX4-Autopilot/
+/px4/
+external/PX4-Autopilot/
+/firmware/ardupilot/backups/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+
+# Generated research reports and local secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+/results/
+/outputs/
+*.parquet
+*.pickle
+*.pkl

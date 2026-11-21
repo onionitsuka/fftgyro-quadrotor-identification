@@ -1,0 +1,54 @@
+diff --git a/src/modules/logger/logger.cpp b/src/modules/logger/logger.cpp
+--- a/src/modules/logger/logger.cpp
++++ b/src/modules/logger/logger.cpp
+@@ -1295,4 +1295,2 @@
+-	if (_log_name_timestamp) {
+-		/* use RTC time for log file naming, e.g. /fs/microsd/log/2014-01-19/19_37_52.ulg */
+-		time_ok = util::get_log_time(&tt, _param_sdlog_utc_offset.get() * 60, false);
+-	}
++	// FFTGYRO: prefer real calendar time; preserve session fallback until RTC is valid.
++	time_ok = util::get_log_time(&tt, _param_sdlog_utc_offset.get() * 60, false);
+@@ -1326,3 +1324,34 @@
+-		snprintf(log_file_name, sizeof(LogFileName::log_file_name), "%s%s.ulg%s", log_file_name_time, replay_suffix,
+-			 crypto_suffix);
+-		snprintf(file_name + n, file_name_size - n, "/%s", log_file_name);
++		// Number full-log recordings within the local-date directory, including aborted tests.
++		// Scan existing names so a reboot cannot reset numbering and overwrite old evidence.
++		unsigned trial = 1;
++		DIR *directory = opendir(file_name);
++
++		if (!directory) {
++			return -1;
++		}
++
++		while (struct dirent *entry = readdir(directory)) {
++			unsigned date = 0, clock = 0, index = 0;
++
++			if (sscanf(entry->d_name, "%8u_%6u_%u", &date, &clock, &index) == 3 && index >= trial) {
++				trial = index < 999 ? index + 1 : 1000;
++			}
++		}
++
++		closedir(directory);
++
++		if (trial > 999) {
++			PX4_ERR("daily trial numbers exhausted");
++			return -1;
++		}
++
++		char stamp[20] {};
++		strftime(stamp, sizeof(stamp), "%Y%m%d_%H%M%S", &tt);
++		snprintf(log_file_name, sizeof(LogFileName::log_file_name), "%s_%03u%s.ulg%s", stamp, trial,
++			 replay_suffix, crypto_suffix);
++		const int appended = snprintf(file_name + n, file_name_size - n, "/%s", log_file_name);
++
++		if (appended < 0 || static_cast<size_t>(appended) >= file_name_size - n || util::file_exist(file_name)) {
++			PX4_ERR("trial log path invalid or already exists");
++			return -1;
++		}
+diff --git a/src/modules/logger/logger.h b/src/modules/logger/logger.h
+--- a/src/modules/logger/logger.h
++++ b/src/modules/logger/logger.h
+@@ -168,1 +168,1 @@
+-		char log_file_name[31];     ///< e.g. "log001.ulg" or "12_09_00_replayed.ulg"
++		char log_file_name[48];     ///< e.g. "log001.ulg" or "12_09_00_replayed.ulg"

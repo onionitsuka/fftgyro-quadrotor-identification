@@ -1,0 +1,4 @@
+numpy==2.5.4
+scipy==1.18.1
+pymavlink==2.4.50
+MAVProxy==1.8.75

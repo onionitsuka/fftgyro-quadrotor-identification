@@ -1,0 +1,26 @@
+{
+  "motion_model": "fixed_axis_stationary_pivot",
+  "parameter_basis": "REPLACE: mass, CG, axis, load calibration, configuration and inertia provenance",
+  "mass_kg": null,
+  "axis_body": [0.0, 1.0, 0.0],
+  "gravity_at_zero_body_m_s2": [0.0, 0.0, -9.80665],
+  "r_sensor_cg_body_m": null,
+  "r_sensor_pivot_body_m": null,
+  "inertia_axis_kg_m2": 0.0195,
+  "inertia_cg_kg_m2": null,
+  "sensor_to_body": null,
+  "bias_sensor": null,
+  "load_convention": null,
+  "motion_sign": null,
+  "angle_offset_rad": 0.0,
+  "rotor_mode": "neglect",
+  "max_motion_gap_s": 0.05,
+  "edge_trim_s": 0.5,
+  "load_time": {
+    "column": "aircraft_receive_estimate_ns",
+    "source_anchor": null,
+    "utc_anchor_ns": null,
+    "seconds_per_unit": 1e-9,
+    "basis": "REPLACE: measured mapping from load/Pi monotonic time to fused.csv UTC"
+  }
+}

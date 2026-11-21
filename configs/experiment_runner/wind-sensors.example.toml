@@ -1,0 +1,38 @@
+# Replace every UNKNOWN value after reading both sensor nameplates.
+
+[acquisition]
+logger = "UNKNOWN"
+simultaneous_sampling_verified = false
+
+[placement]
+freestream_position_documented = false
+freestream_outside_apparatus_disturbance_confirmed = false
+near_frame_position_documented = false
+near_probe_support_documented = false
+
+[verification]
+probe_installed_removed_pair_planned = true
+near_probe_removed_verified = false
+near_probe_installed = false
+
+[[sensor]]
+sensor_id = "WS-FREE"
+model = ""
+serial_number = ""
+output_type = ""
+acquisition_channel = ""
+role = "freestream"
+calibration_evidence = ""
+scale_verified = false
+zero_check_verified = false
+
+[[sensor]]
+sensor_id = "WS-NEAR"
+model = ""
+serial_number = ""
+output_type = ""
+acquisition_channel = ""
+role = "near_frame"
+calibration_evidence = ""
+scale_verified = false
+zero_check_verified = false

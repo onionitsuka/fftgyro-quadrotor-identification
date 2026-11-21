@@ -1,0 +1,48 @@
+[autopilot]
+board = "Pixhawk 6X"
+# Choose only after checking MAVLink HEARTBEAT/firmware screen:
+# "ardupilot_copter" or "px4"
+stack = ""
+version = ""
+firmware_target = ""
+
+[outputs]
+motor_output_channels = []
+connector_group = ""
+# BDShot is not required. Use the protocol actually verified on the vehicle.
+actuator_protocol = ""
+
+[verification]
+heartbeat_identity_verified = false
+parameter_backup_file = ""
+output_mapping_verified = false
+output_protocol_verified = false
+motor_test_command = ""
+propellers_removed = false
+command_ack_accepted = false
+timeout_stop_verified = false
+
+[waveform_executor]
+enabled = false
+px4_base_commit = ""
+patch_file = ""
+pi_binary_commit = ""
+protocol_sha256 = ""
+pi_uart_device = "/dev/serial0"
+pi_uart_baud = 921600
+px4_uart_port = "TELEM1"
+px4_target_system = 1
+px4_target_component = 1
+pc_pi_transport = "usb_ethernet_or_wifi_ssh"
+holybro_radio_connected = false
+input_semantics = "direct_motor_command_via_px4_actuator_test"
+sample_by_sample_over_radio = false
+run_requires_disarmed = true
+actuator_test_timeout_ms = 150
+motor_function_mapping_verified = false
+pi_power_loss_timeout_verified = false
+uart_disconnect_timeout_verified = false
+rc_kill_verified = false
+old_run_rejected_after_kill = false
+dshot_update_skew_verified = false
+electrical_sync_edge_verified = false

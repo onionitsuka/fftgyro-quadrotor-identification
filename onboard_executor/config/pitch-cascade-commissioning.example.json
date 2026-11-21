@@ -1,0 +1,106 @@
+{
+  "schema": "fftgyro-axis-session-v1",
+  "session_id": "example-pitch-cascade-commissioning",
+  "parent_series_id": "example-series",
+  "role": "PILOT",
+  "repetition": 1,
+  "wind_m_s": 0,
+  "heading_deg": 0,
+  "fixed_pitch_deg": 0,
+  "runtime_qualified": false,
+  "maximum_duration_s": 15,
+  "transition_rate_deg_s": 5,
+  "preparation_hold_s": 1,
+  "hardware": {
+    "uart_device": "/dev/serial0",
+    "target_system": 1,
+    "target_component": 1,
+    "axis_mix": [
+      1,
+      -1,
+      1,
+      -1
+    ],
+    "motor_min": 0,
+    "motor_max": 0.8,
+    "startup_ramp_rate": 0.04,
+    "normal_ramp_rate": 0.1,
+    "abort_ramp_rate": 0.1,
+    "log_directory": "/home/fftgyro/research-data/fftgyro/example",
+    "non_target_pid_enabled": false,
+    "motor_mapping_verified": false,
+    "feedback_frame_verified": false,
+    "stop_verified": false,
+    "rpm_logging_verified": false,
+    "load_logging_verified": false,
+    "sync_verified": false,
+    "mechanically_locked_verified": false
+  },
+  "control_mode": "AXIS_PID",
+  "pid": {
+    "axis": "PITCH",
+    "law": "ANGLE_RATE_PID",
+    "cascade": {
+      "attitude_kp": 4,
+      "kp": 0.14,
+      "ki": 0.3,
+      "kd": 0,
+      "torque_to_delta": 0.7071067811865476,
+      "target_rate_limit_deg_s": 30,
+      "derivative_cutoff_hz": 10
+    },
+    "additional_limits_enabled": true,
+    "motor_slew_time_s": 0,
+    "zero_quaternion_wxyz": [
+      1,
+      0,
+      0,
+      0
+    ],
+    "zero_angle_deg": 0,
+    "kp": 0,
+    "ki": 0,
+    "kd": 0,
+    "integral_limit": 0.1,
+    "differential_limit": 0.3,
+    "angle_min_deg": -90,
+    "angle_max_deg": 90,
+    "rate_limit_deg_s": 60,
+    "swing_limit_deg": 90,
+    "tracking_limit_deg": 90,
+    "feedback_timeout_s": 0.1,
+    "saturation_timeout_s": 2
+  },
+  "settling": {
+    "error_deg": 5,
+    "rate_deg_s": 5,
+    "window_s": 0.15,
+    "dwell_s": 0.5,
+    "maximum_hold_s": 5
+  },
+  "startup": {
+    "ramp_shape": "QUINTIC",
+    "minimum_duration_s": 5,
+    "capture_reference": true,
+    "reference_dwell_s": 0.3,
+    "integral_enable_collective": 0.1,
+    "control_ready_verified": false
+  },
+  "shutdown": {
+    "minimum_duration_s": 2,
+    "external_fade_s": 0.5
+  },
+  "segments": [
+    {
+      "condition_id": "PITCH-CASCADE-PREP",
+      "segment_id": "prepare-01",
+      "hold_id": "prepare-01",
+      "kind": "HOLD",
+      "duration_s": 1,
+      "start_deg": 0,
+      "collective": 0.1,
+      "require_settled": true,
+      "preparation_only": true
+    }
+  ]
+}

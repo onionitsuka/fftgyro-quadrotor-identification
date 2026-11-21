@@ -1,0 +1,94 @@
+{
+  "schema": "fftgyro-axis-session-v1",
+  "session_id": "example-fixed-slow-rate60",
+  "parent_series_id": "example-series",
+  "role": "PILOT",
+  "repetition": 1,
+  "wind_m_s": 0,
+  "heading_deg": 0,
+  "fixed_pitch_deg": 0,
+  "runtime_qualified": false,
+  "maximum_duration_s": 18,
+  "transition_rate_deg_s": 2,
+  "hardware": {
+    "uart_device": "/dev/serial0",
+    "target_system": 1,
+    "target_component": 1,
+    "axis_mix": [
+      1,
+      -1,
+      1,
+      -1
+    ],
+    "motor_min": 0,
+    "motor_max": 0.12,
+    "startup_ramp_rate": 0.01,
+    "normal_ramp_rate": 0.1,
+    "abort_ramp_rate": 0.1,
+    "log_directory": "/home/fftgyro/research-data/fftgyro/example",
+    "non_target_pid_enabled": false,
+    "motor_mapping_verified": true,
+    "feedback_frame_verified": true,
+    "stop_verified": false,
+    "rpm_logging_verified": false,
+    "load_logging_verified": false,
+    "sync_verified": false,
+    "mechanically_locked_verified": false
+  },
+  "pid": {
+    "axis": "PITCH",
+    "additional_limits_enabled": true,
+    "motor_slew_time_s": 0.2,
+    "zero_quaternion_wxyz": [
+      0.06590295476825558,
+      0.05906813793590451,
+      0.010348487452250798,
+      0.9960224216557823
+    ],
+    "zero_angle_deg": 0,
+    "kp": 0,
+    "ki": 0,
+    "kd": 0,
+    "integral_limit": 0.002,
+    "differential_limit": 0.005,
+    "angle_min_deg": -20,
+    "angle_max_deg": 20,
+    "rate_limit_deg_s": 60,
+    "swing_limit_deg": 20,
+    "tracking_limit_deg": 20,
+    "feedback_timeout_s": 0.1,
+    "saturation_timeout_s": 2
+  },
+  "settling": {
+    "error_deg": 1,
+    "rate_deg_s": 2,
+    "window_s": 0.15,
+    "dwell_s": 0.5,
+    "maximum_hold_s": 5
+  },
+  "startup": {
+    "integral_enable_collective": 0.1,
+    "control_ready_verified": false
+  },
+  "shutdown": {
+    "minimum_duration_s": 2,
+    "external_fade_s": 0.5
+  },
+  "segments": [
+    {
+      "condition_id": "FIXED-STARTUP-CHECK",
+      "segment_id": "hold-01",
+      "hold_id": "hold-01",
+      "kind": "HOLD",
+      "duration_s": 5,
+      "start_deg": 0,
+      "collective": 0.1,
+      "require_settled": true
+    }
+  ],
+  "control_mode": "FIXED_HOLD",
+  "profile_kind": "fixed_equal_command_startup_check",
+  "metadata": {
+    "qualification": "Draft; no new apparatus or voltage confirmation; startup ramp and PX4 firmware unchanged."
+  }
+}

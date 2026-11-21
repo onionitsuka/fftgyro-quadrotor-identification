@@ -1,0 +1,822 @@
+{
+  "schema": 2,
+  "id": "retest-motor-20261111",
+  "coordinate_system": "NED world, FRD body; scalar-first body-to-world quaternion",
+  "training_rpm_route": {
+    "measured": "tunnel loads fitted with measured RPM",
+    "command_route": "tunnel loads fitted with RPM estimated from command and voltage (no measured RPM)"
+  },
+  "default_route": "command_route",
+  "simulation_rpm_source": "generated from command and voltage; no flight data",
+  "flight_data_used_for_fitting": false,
+  "airspeed_limit_m_s": 11.5,
+  "settings": {
+    "mass_kg": 1.5221456722487272,
+    "cg_flu_m": [
+      -0.0012457831850472378,
+      -0.00020501526933222684,
+      0.08469651872172239
+    ],
+    "propulsion_reference_cg_flu_m": [
+      -0.00118167487305559,
+      -0.000193481696162535,
+      0.0812596628766431
+    ],
+    "inertia_kg_m2": [
+      0.0169,
+      0.01654505374014247,
+      0.02757838659099771
+    ],
+    "rotor_inertia_kg_m2": 3.060838931314845e-05,
+    "kf": 1.0611738388343621e-05,
+    "kq": 2.0065025697826264e-07,
+    "rotor_radius_m": 0.127,
+    "arm_xy_m": 0.1768,
+    "rho": 1.225,
+    "fz_model": "sun_graybox",
+    "yaw_motion_model": "sun_blended",
+    "sun_beta_halfwidth_deg": 5.0,
+    "sun_mu_halfwidth": 0.005,
+    "hz": 100,
+    "stride": 10,
+    "load_cutoff_hz": 5.0,
+    "consistent_load_filter": true,
+    "accept_leptrino_0x44": true,
+    "smooth_seconds": 0.5,
+    "warmup_seconds": 2.0,
+    "pivot_flu_m": [
+      0.0,
+      0.0,
+      0.0946
+    ],
+    "bias_sensor": [
+      1.533289031909923,
+      -0.8941354342513528,
+      3.897356241489841,
+      -0.0026839816200249916,
+      -0.03530655222219087,
+      0.08712733366048599
+    ],
+    "encoder_sigma_rad": 0.0010471975511965976,
+    "gyro_sigma_rad_s": 0.01,
+    "jerk_density": 5.0,
+    "bias_walk": 0.001,
+    "pitch_encoder_sign": -1.0,
+    "pitch_encoder_offset_deg": -147.1289,
+    "axis_roll_deg": -0.7250755384432894,
+    "axis_pitch_offset_deg": 0.14671077651166656,
+    "max_terms": 6,
+    "sun_max_terms": 18,
+    "shortlist": 8,
+    "fit_samples_per_run": 300,
+    "improvement": 0.01,
+    "selection_method": "sun_public",
+    "free_propulsion": false,
+    "clock_special_runs": [
+      34,
+      639
+    ],
+    "prefix_segment_max": [
+      [
+        765,
+        24
+      ]
+    ]
+  },
+  "motor_models": [
+    {
+      "kind": "kaufmann2023",
+      "coefficients": [
+        704.9443295609248,
+        -1200.4186640121334,
+        -2650.9188115247875,
+        4835.152507488951,
+        8985.062446936985
+      ],
+      "fit_cost": 516.2080722926119,
+      "rank": 5,
+      "scaled_condition_number": 1508.7310191866818,
+      "basis": [
+        "1",
+        "V/16",
+        "sqrt(d)",
+        "d",
+        "V/16*sqrt(d)"
+      ],
+      "coefficients_volts_basis": [
+        704.9443295609248,
+        -75.02616650075834,
+        -2650.9188115247875,
+        4835.152507488951,
+        561.5664029335616
+      ],
+      "motor": 1,
+      "calibration_runs": 4,
+      "calibration_points": 60,
+      "command_range": [
+        0.3000000119209289,
+        0.699999988079071
+      ],
+      "voltage_range": [
+        14.06969589318103,
+        16.364561835407475
+      ],
+      "delay_s": 0,
+      "tau_up_s": 0.05556767479118104,
+      "tau_down_s": 0.05556767479118104
+    },
+    {
+      "kind": "kaufmann2023",
+      "coefficients": [
+        1933.9623528326397,
+        -2312.640891786663,
+        -4836.486519167634,
+        5281.962089443682,
+        10692.850700274874
+      ],
+      "fit_cost": 635.5378425902516,
+      "rank": 5,
+      "scaled_condition_number": 1508.7310191866818,
+      "basis": [
+        "1",
+        "V/16",
+        "sqrt(d)",
+        "d",
+        "V/16*sqrt(d)"
+      ],
+      "coefficients_volts_basis": [
+        1933.9623528326397,
+        -144.54005573666643,
+        -4836.486519167634,
+        5281.962089443682,
+        668.3031687671796
+      ],
+      "motor": 2,
+      "calibration_runs": 4,
+      "calibration_points": 60,
+      "command_range": [
+        0.3000000119209289,
+        0.699999988079071
+      ],
+      "voltage_range": [
+        14.06969589318103,
+        16.364561835407475
+      ],
+      "delay_s": 0,
+      "tau_up_s": 0.05556767479118104,
+      "tau_down_s": 0.05556767479118104
+    },
+    {
+      "kind": "kaufmann2023",
+      "coefficients": [
+        1154.075940797366,
+        -1590.8856150124104,
+        -3526.2951568192234,
+        5018.284157200092,
+        9612.340627307867
+      ],
+      "fit_cost": 578.2995282400292,
+      "rank": 5,
+      "scaled_condition_number": 1508.7310191866818,
+      "basis": [
+        "1",
+        "V/16",
+        "sqrt(d)",
+        "d",
+        "V/16*sqrt(d)"
+      ],
+      "coefficients_volts_basis": [
+        1154.075940797366,
+        -99.43035093827565,
+        -3526.2951568192234,
+        5018.284157200092,
+        600.7712892067417
+      ],
+      "motor": 3,
+      "calibration_runs": 4,
+      "calibration_points": 60,
+      "command_range": [
+        0.3000000119209289,
+        0.699999988079071
+      ],
+      "voltage_range": [
+        14.06969589318103,
+        16.364561835407475
+      ],
+      "delay_s": 0,
+      "tau_up_s": 0.05556767479118104,
+      "tau_down_s": 0.05556767479118104
+    },
+    {
+      "kind": "kaufmann2023",
+      "coefficients": [
+        908.9865751070244,
+        -1263.6633638577212,
+        -3121.10286266624,
+        5086.429775862781,
+        9025.36299757011
+      ],
+      "fit_cost": 722.2810411029454,
+      "rank": 5,
+      "scaled_condition_number": 1508.7310191866818,
+      "basis": [
+        "1",
+        "V/16",
+        "sqrt(d)",
+        "d",
+        "V/16*sqrt(d)"
+      ],
+      "coefficients_volts_basis": [
+        908.9865751070244,
+        -78.97896024110757,
+        -3121.10286266624,
+        5086.429775862781,
+        564.0851873481319
+      ],
+      "motor": 4,
+      "calibration_runs": 4,
+      "calibration_points": 60,
+      "command_range": [
+        0.3000000119209289,
+        0.699999988079071
+      ],
+      "voltage_range": [
+        14.06969589318103,
+        16.364561835407475
+      ],
+      "delay_s": 0,
+      "tau_up_s": 0.05556767479118104,
+      "tau_down_s": 0.05556767479118104
+    }
+  ],
+  "models": {
+    "measured": {
+      "Fx": {
+        "feature_names": [
+          "rotor_inplane_linear",
+          "rotor_inplane_quadratic",
+          "abs_mu_y*mu_z",
+          "mu_x*abs_mu_y^2",
+          "mu_x^3",
+          "mu_z^3",
+          "qbar",
+          "mu_x*mu_z",
+          "abs_mu_y",
+          "mu_x",
+          "mu_x^2*mu_z"
+        ],
+        "coefficient_by_name": {
+          "rotor_inplane_linear": 0.09972489158996652,
+          "rotor_inplane_quadratic": -0.020631975343446806,
+          "abs_mu_y*mu_z": -0.0027363732469965793,
+          "mu_x*abs_mu_y^2": -0.3427088391192848,
+          "mu_x^3": -0.143327861449835,
+          "mu_z^3": 0.2617646705288052,
+          "qbar": -0.051986550358448735,
+          "mu_x*mu_z": -0.03183071233709013,
+          "abs_mu_y": -0.002069400411793922,
+          "mu_x": 0.07953905322430369,
+          "mu_x^2*mu_z": 0.09244868239258952
+        },
+        "spec": "expanded"
+      },
+      "Fy": {
+        "feature_names": [
+          "rotor_inplane_quadratic",
+          "abs_mu_x",
+          "abs_mu_x^2*mu_y",
+          "rotor_inplane_linear",
+          "abs_mu_x*mu_y"
+        ],
+        "coefficient_by_name": {
+          "rotor_inplane_quadratic": 0.06555235874960993,
+          "abs_mu_x": -0.0019376196531512445,
+          "abs_mu_x^2*mu_y": -0.5548178502449443,
+          "rotor_inplane_linear": 0.010946554173641253,
+          "abs_mu_x*mu_y": 0.09043437965508802
+        },
+        "spec": "expanded"
+      },
+      "Fz": {
+        "feature_names": [
+          "inflow_delta",
+          "mu_h2*mu_z",
+          "prop_gain",
+          "inflow_delta*mu_h2",
+          "mu_total2",
+          "mu_z"
+        ],
+        "coefficient_by_name": {
+          "inflow_delta": 0.08008103351069579,
+          "mu_h2*mu_z": 3.9574641579459278,
+          "prop_gain": -0.009543330387141696,
+          "inflow_delta*mu_h2": 4.190532249529571,
+          "mu_total2": 0.17635506669874484,
+          "mu_z": 0.010925870264868194
+        },
+        "spec": "expanded"
+      },
+      "Mx": {
+        "feature_names": [
+          "mu_y",
+          "abs_mu_x^2*mu_y",
+          "abs_mu_x*mu_y",
+          "1",
+          "up"
+        ],
+        "coefficient_by_name": {
+          "mu_y": -0.01631987786315766,
+          "abs_mu_x^2*mu_y": -0.6999709057108986,
+          "abs_mu_x*mu_y": 0.15562536666405197,
+          "1": 4.010367543525618e-05,
+          "up": -0.0002909526977489265
+        },
+        "spec": "expanded"
+      },
+      "My": {
+        "feature_names": [
+          "mu_x",
+          "mu_x*mu_z",
+          "mu_x^3",
+          "mu_x^3*mu_z",
+          "mu_z^3",
+          "abs_mu_y^3",
+          "mu_x^5",
+          "abs_mu_y^2*mu_z",
+          "mu_z^2*uq",
+          "qbar",
+          "mu_x^2*mu_z^2",
+          "mu_x^4*uq",
+          "mu_x^5*abs_mu_y",
+          "speed_dev__mu_x_mu_z",
+          "mu_x^4",
+          "mu_x*uq",
+          "abs_mu_y*mu_z^2",
+          "mu_x*mu_z^2",
+          "mu_x*abs_mu_y*mu_z",
+          "speed_dev__mu_x_mu_x"
+        ],
+        "coefficient_by_name": {
+          "mu_x": 0.026646580735586324,
+          "mu_x*mu_z": 0.39291295660665554,
+          "mu_x^3": -1.2296666419398394,
+          "mu_x^3*mu_z": -3.7352729095228874,
+          "mu_z^3": -0.08009318613800612,
+          "abs_mu_y^3": -0.7749881018631288,
+          "mu_x^5": -21.510848739173987,
+          "abs_mu_y^2*mu_z": -1.2740134911559609,
+          "mu_z^2*uq": -0.03426542759444567,
+          "qbar": -0.09000528978814473,
+          "mu_x^2*mu_z^2": -8.346259231115406,
+          "mu_x^4*uq": 0.5727918838578768,
+          "mu_x^5*abs_mu_y": 2.2898143414776957,
+          "speed_dev__mu_x_mu_z": -0.05470178939991328,
+          "mu_x^4": 9.752068100209456,
+          "mu_x*uq": -0.0027135254876682873,
+          "abs_mu_y*mu_z^2": -1.1070352002597634,
+          "mu_x*mu_z^2": 2.4461428510320147,
+          "mu_x*abs_mu_y*mu_z": -0.512389171147775,
+          "speed_dev__mu_x_mu_x": 0.04110482928095726
+        },
+        "spec": "expanded"
+      },
+      "Mz": {
+        "feature_names": [
+          "flow_000_u",
+          "rotor3_torque",
+          "mu_z",
+          "rotor1_torque",
+          "flow_101",
+          "body_h4_sin",
+          "ur_absur",
+          "speed_mu_y",
+          "flow_010",
+          "body_h1_sin",
+          "flow_010_u",
+          "flow_100",
+          "mu_y*mu_z",
+          "local2_mu_x",
+          "body_h1_cos",
+          "flow_200"
+        ],
+        "coefficient_by_name": {
+          "flow_000_u": -0.00021031705734589706,
+          "rotor3_torque": 0.0015881661170882144,
+          "mu_z": -0.0017921126367293973,
+          "rotor1_torque": 0.0013768097807845896,
+          "flow_101": 0.008418678961878987,
+          "body_h4_sin": 0.0011758231615323475,
+          "ur_absur": -7.226264566827233e-05,
+          "speed_mu_y": -0.0031695171248456587,
+          "flow_010": 0.0026465170403168034,
+          "body_h1_sin": -0.011740996927423902,
+          "flow_010_u": -0.0006184979226449538,
+          "flow_100": -0.0006275214334433174,
+          "mu_y*mu_z": 0.007095222057460725,
+          "local2_mu_x": 0.0003646579647590206,
+          "body_h1_cos": 0.005416968661242095,
+          "flow_200": -0.003244721214851354
+        },
+        "spec": "expanded"
+      }
+    },
+    "command_route": {
+      "Fx": {
+        "feature_names": [
+          "intercept",
+          "rotor_inplane_linear",
+          "rotor_inplane_quadratic",
+          "abs_mu_y*mu_z",
+          "1",
+          "mu_x*abs_mu_y^2",
+          "mu_x^2*mu_z",
+          "mu_x^3",
+          "abs_mu_y",
+          "mu_x",
+          "qbar",
+          "mu_x*mu_z",
+          "mu_z^3"
+        ],
+        "coefficient_by_name": {
+          "intercept": -0.10498851677483766,
+          "rotor_inplane_linear": 0.10910753514796287,
+          "rotor_inplane_quadratic": -0.02648711249767986,
+          "abs_mu_y*mu_z": -0.007937050068050122,
+          "1": 0.00017671520482431254,
+          "mu_x*abs_mu_y^2": -0.31850339762455615,
+          "mu_x^2*mu_z": 0.11079654703017643,
+          "mu_x^3": -0.13715347836143968,
+          "abs_mu_y": -0.0027198028688297936,
+          "mu_x": 0.08756160333679508,
+          "qbar": -0.05083738902636438,
+          "mu_x*mu_z": -0.03045386624145514,
+          "mu_z^3": 0.22694815434150958
+        },
+        "spec": "expanded"
+      },
+      "Fy": {
+        "feature_names": [
+          "rotor_inplane_quadratic",
+          "abs_mu_x",
+          "abs_mu_x^2*mu_y",
+          "mu_y",
+          "abs_mu_x*mu_y"
+        ],
+        "coefficient_by_name": {
+          "rotor_inplane_quadratic": 0.06510795568173632,
+          "abs_mu_x": -0.0019447962478471666,
+          "abs_mu_x^2*mu_y": -0.5581070770043685,
+          "mu_y": -0.011038700896120636,
+          "abs_mu_x*mu_y": 0.0911475177257325
+        },
+        "spec": "expanded"
+      },
+      "Fz": {
+        "feature_names": [
+          "inflow_delta",
+          "mu_h2",
+          "mu_total2",
+          "mu_z",
+          "inflow_delta*mu_h2",
+          "mu_h2*mu_z",
+          "prop_gain"
+        ],
+        "coefficient_by_name": {
+          "inflow_delta": 0.07456813014492193,
+          "mu_h2": -0.017735362424828933,
+          "mu_total2": 0.16038863967072706,
+          "mu_z": 0.008302725770364285,
+          "inflow_delta*mu_h2": 3.4994212470305235,
+          "mu_h2*mu_z": 3.2687700005850138,
+          "prop_gain": -0.008026745365113601
+        },
+        "spec": "expanded"
+      },
+      "Mx": {
+        "feature_names": [
+          "mu_y",
+          "abs_mu_x^2*mu_y",
+          "abs_mu_x*mu_y",
+          "up"
+        ],
+        "coefficient_by_name": {
+          "mu_y": -0.01641442574225966,
+          "abs_mu_x^2*mu_y": -0.7106585765657462,
+          "abs_mu_x*mu_y": 0.15869793608813854,
+          "up": -0.0002686285759932399
+        },
+        "spec": "expanded"
+      },
+      "My": {
+        "feature_names": [
+          "mu_x",
+          "mu_x*mu_z",
+          "mu_x^2",
+          "mu_x^2*mu_z",
+          "mu_z^3",
+          "speed_dev__mu_x_mu_x",
+          "abs_mu_y",
+          "mu_x*abs_mu_y*mu_z",
+          "mu_z*uq",
+          "speed_dev__mu_z_mu_z",
+          "qbar",
+          "mu_z",
+          "speed_dev__mu_x",
+          "mu_x^3",
+          "abs_mu_y*mu_z^2"
+        ],
+        "coefficient_by_name": {
+          "mu_x": 0.03431401553518349,
+          "mu_x*mu_z": 0.4784981681849615,
+          "mu_x^2": -0.14117232344783032,
+          "mu_x^2*mu_z": -1.4988842990525073,
+          "mu_z^3": -0.6811567511027502,
+          "speed_dev__mu_x_mu_x": 0.15119902934975918,
+          "abs_mu_y": -0.0041650348899611575,
+          "mu_x*abs_mu_y*mu_z": -0.7154771933301534,
+          "mu_z*uq": 0.004153859570076607,
+          "speed_dev__mu_z_mu_z": 0.1387540151337804,
+          "qbar": -0.08028584910485378,
+          "mu_z": -0.004563769548457384,
+          "speed_dev__mu_x": -0.013707131905120223,
+          "mu_x^3": 0.28056660514487386,
+          "abs_mu_y*mu_z^2": -0.31687604637507094
+        },
+        "spec": "expanded"
+      },
+      "Mz": {
+        "feature_names": [
+          "flow_000_u",
+          "rotor3_torque",
+          "mu_z",
+          "rotor1_torque",
+          "mu_x*mu_z",
+          "body_h4_sin",
+          "flow_100",
+          "local1_ur",
+          "speed_mu_y",
+          "flow_010",
+          "body_h1_sin",
+          "mu_y*mu_z",
+          "flow_010_u",
+          "local2_mu_x"
+        ],
+        "coefficient_by_name": {
+          "flow_000_u": -0.0002431570412364877,
+          "rotor3_torque": 0.0016297241973233106,
+          "mu_z": -0.001106345411536377,
+          "rotor1_torque": 0.0014212836308209924,
+          "mu_x*mu_z": 0.0022268986966275783,
+          "body_h4_sin": 0.0011120446896547055,
+          "flow_100": -0.0003272346811030451,
+          "local1_ur": -3.152955321247207e-05,
+          "speed_mu_y": -0.0029758026838809988,
+          "flow_010": 0.0024141045614683686,
+          "body_h1_sin": -0.008965456366611377,
+          "mu_y*mu_z": 0.009206852700680479,
+          "flow_010_u": -0.0006585622307957009,
+          "local2_mu_x": 0.0006476294947072212
+        },
+        "spec": "expanded"
+      }
+    }
+  },
+  "controller": {
+    "velocity_kp": 0.9,
+    "velocity_ki": 0.15,
+    "height_kp": 1.2,
+    "attitude_frequency_rad_s": [
+      10,
+      10,
+      3
+    ],
+    "attitude_damping": 1.1,
+    "attitude_ki": 1.0,
+    "horizontal_acceleration_limit_m_s2": 2.5,
+    "vertical_acceleration_limit_m_s2": 2,
+    "torque_limit_Nm": [
+      0.6,
+      0.6,
+      0.1
+    ]
+  },
+  "scenario": {
+    "target_m_s": 3.0,
+    "initial_height_m": 2.0,
+    "hover_s": 2.0,
+    "ramp_s": 4.0,
+    "hold_s": 1.5,
+    "after_s": 3.0,
+    "voltage_V": 16.0,
+    "wind_ned_m_s": [
+      0,
+      0,
+      0
+    ],
+    "dt_s": 0.005
+  },
+  "provenance": {
+    "load_model": "One absolute six-axis existing-plus-graybox function per route; common coefficients across wind speeds; no speed switching or initial-load offset; pivot 94.6 mm",
+    "motor_model": "Kaufmann Eq. 6 static map calibrated on dedicated Nov 11 bench tests (commands 0.30-0.70); common first-order time constant from transient tests; no delay; no flight refit",
+    "rotor_inertia_note": "Existing estimate from a different motor/propeller; retained as an explicit approximation",
+    "sources": {
+      "outputs/six-axis-physical-zero-20261102/selected-model.json (measured)": "98503c646bf9c8b17588508ea7a7fa71346bd5ab089bd4f682c99739a8867624",
+      "outputs/command-route-newmotor-20261102/selected-model.json (command_route)": "e580a6c4c815a344152c95f77c7798f17c31e025919b2c17571560d5a84b7ebc"
+    },
+    "evaluation_source_sha256": {
+      "aerodynamics.py": "d53e0225548634d5e6218ea9915906b6c329b3a01b712c451fa10a99b5f5e309"
+    },
+    "controller_note": "Simple common controller (not PX4). Attitude bandwidth raised from 4 to 10 rad/s on 2026-11-03 so that both models reach forward flight; identical for both models",
+    "roll_transfer_note": "Mx correction = mean of +/-90 deg rotated My correction (no Roll excitation in tunnel); selected by a pre-registered flight Mx criterion, 2026-11-07",
+    "calibration_update": "outputs/thesis-calibration-update-20261108",
+    "motor_update": "outputs/thesis-kaufmann-update-20261110"
+  },
+  "roll_transfer": true,
+  "motor_model_provenance": {
+    "schema": "fftgyro-literature-motor-v1",
+    "models": [
+      {
+        "kind": "kaufmann2023",
+        "coefficients": [
+          704.9443295609248,
+          -1200.4186640121334,
+          -2650.9188115247875,
+          4835.152507488951,
+          8985.062446936985
+        ],
+        "fit_cost": 516.2080722926119,
+        "rank": 5,
+        "scaled_condition_number": 1508.7310191866818,
+        "basis": [
+          "1",
+          "V/16",
+          "sqrt(d)",
+          "d",
+          "V/16*sqrt(d)"
+        ],
+        "coefficients_volts_basis": [
+          704.9443295609248,
+          -75.02616650075834,
+          -2650.9188115247875,
+          4835.152507488951,
+          561.5664029335616
+        ],
+        "motor": 1,
+        "calibration_runs": 4,
+        "calibration_points": 60,
+        "command_range": [
+          0.3000000119209289,
+          0.699999988079071
+        ],
+        "voltage_range": [
+          14.06969589318103,
+          16.364561835407475
+        ]
+      },
+      {
+        "kind": "kaufmann2023",
+        "coefficients": [
+          1933.9623528326397,
+          -2312.640891786663,
+          -4836.486519167634,
+          5281.962089443682,
+          10692.850700274874
+        ],
+        "fit_cost": 635.5378425902516,
+        "rank": 5,
+        "scaled_condition_number": 1508.7310191866818,
+        "basis": [
+          "1",
+          "V/16",
+          "sqrt(d)",
+          "d",
+          "V/16*sqrt(d)"
+        ],
+        "coefficients_volts_basis": [
+          1933.9623528326397,
+          -144.54005573666643,
+          -4836.486519167634,
+          5281.962089443682,
+          668.3031687671796
+        ],
+        "motor": 2,
+        "calibration_runs": 4,
+        "calibration_points": 60,
+        "command_range": [
+          0.3000000119209289,
+          0.699999988079071
+        ],
+        "voltage_range": [
+          14.06969589318103,
+          16.364561835407475
+        ]
+      },
+      {
+        "kind": "kaufmann2023",
+        "coefficients": [
+          1154.075940797366,
+          -1590.8856150124104,
+          -3526.2951568192234,
+          5018.284157200092,
+          9612.340627307867
+        ],
+        "fit_cost": 578.2995282400292,
+        "rank": 5,
+        "scaled_condition_number": 1508.7310191866818,
+        "basis": [
+          "1",
+          "V/16",
+          "sqrt(d)",
+          "d",
+          "V/16*sqrt(d)"
+        ],
+        "coefficients_volts_basis": [
+          1154.075940797366,
+          -99.43035093827565,
+          -3526.2951568192234,
+          5018.284157200092,
+          600.7712892067417
+        ],
+        "motor": 3,
+        "calibration_runs": 4,
+        "calibration_points": 60,
+        "command_range": [
+          0.3000000119209289,
+          0.699999988079071
+        ],
+        "voltage_range": [
+          14.06969589318103,
+          16.364561835407475
+        ]
+      },
+      {
+        "kind": "kaufmann2023",
+        "coefficients": [
+          908.9865751070244,
+          -1263.6633638577212,
+          -3121.10286266624,
+          5086.429775862781,
+          9025.36299757011
+        ],
+        "fit_cost": 722.2810411029454,
+        "rank": 5,
+        "scaled_condition_number": 1508.7310191866818,
+        "basis": [
+          "1",
+          "V/16",
+          "sqrt(d)",
+          "d",
+          "V/16*sqrt(d)"
+        ],
+        "coefficients_volts_basis": [
+          908.9865751070244,
+          -78.97896024110757,
+          -3121.10286266624,
+          5086.429775862781,
+          564.0851873481319
+        ],
+        "motor": 4,
+        "calibration_runs": 4,
+        "calibration_points": 60,
+        "command_range": [
+          0.3000000119209289,
+          0.699999988079071
+        ],
+        "voltage_range": [
+          14.06969589318103,
+          16.364561835407475
+        ]
+      }
+    ],
+    "tau_s": 0.05556767479118104,
+    "delay_s": 0,
+    "training_free_run_rmse": 70.5504481614541,
+    "tau_bound_hit": false,
+    "fit": "one common tau; calibration conditions only; run/motor equal weight; no pure delay",
+    "fold": "final",
+    "training_runs": [
+      "20261111_152917_436822-motor-n002-powered-steady-high-481b40",
+      "20261111_160211_236821-motor-n007-powered-steady-middle-28c68f",
+      "20261111_171825_804395-motor-n003-powered-steady-high-a73571",
+      "20261111_172156_209310-motor-n004-powered-steady-high-1b13a4"
+    ],
+    "excluded_conditions": [],
+    "source": "20261111 steady calibration; run/plateau equal weights",
+    "flight_training": false,
+    "validity": "calibrated spinning range only; startup/stop not validated",
+    "tau_training_runs": [
+      "20261111_160619_607237-motor-n021-powered-transient-middle-5b3ed2",
+      "20261111_162250_143552-motor-n025-powered-transient-low-bf831f",
+      "20261111_173121_358229-motor-n017-powered-transient-high-b342e6"
+    ],
+    "wind_tunnel_cv_note": "RPM map calibrated on separate Nov11 trials; same map across original wind-tunnel folds"
+  },
+  "feature_state_provenance": {
+    "effective_settings": {
+      "fz_model": "sun_graybox",
+      "yaw_motion_model": "sun_blended"
+    },
+    "source": "mechanics/rebuild.py:make_state and flight/vehicle.py",
+    "note": "Export the effective state-generator settings, not the pre-override mechanical configuration. Same state definitions in wind fitting and flight validation."
+  }
+}

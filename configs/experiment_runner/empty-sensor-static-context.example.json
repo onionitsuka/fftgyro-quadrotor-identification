@@ -1,0 +1,21 @@
+{
+  "schema": "fftgyro-retest-context-v1",
+  "configuration_id": "REPLACE-empty-sensor-current-mount",
+  "battery_id": "not-installed",
+  "zero_epoch_id": "REPLACE-sensor-power-epoch",
+  "calibration_block_id": "REPLACE-empty-sensor-block",
+  "split": "T",
+  "location_id": "outside_wind_tunnel",
+  "wind_m_s": 0,
+  "stage": "E-empty-static",
+  "axis": "PITCH",
+  "pose_id": "level",
+  "selected_axis_free": false,
+  "all_axes_locked": true,
+  "outside_wind_tunnel": true,
+  "motor_power_disconnected": true,
+  "aircraft_removed": true,
+  "sensor_measurement_side_empty": true,
+  "sensor_support_side_fixed": true,
+  "other_axes_locked": true
+}

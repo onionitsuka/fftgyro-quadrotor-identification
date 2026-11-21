@@ -1,0 +1,18 @@
+# 2026-07-16版の入力出力関係式で定義した電圧依存command写像と一次遅れの設定。
+# 係数は新規Phase 1データをrpm-calibrateへ渡した結果で置き換える。
+[rpm_source]
+model = "voltage_quadratic_command_map_calibrated"
+command_linear_per_v = 0.0
+command_quadratic_per_v = 0.0
+calibrated_command_min = 0.0
+calibrated_command_max = 0.0
+calibration_rmse_rpm = -1.0
+calibration_data_sha256 = ""
+
+# 旧ログ由来の時定数は採用しない。
+# 新規同期試験で同定するまで0.0のままにし、readinessを通さない。
+[motor_time_constant_s]
+motor_1 = 0.0
+motor_2 = 0.0
+motor_3 = 0.0
+motor_4 = 0.0

@@ -1,0 +1,7 @@
+{
+  "COM_ARM_IMU_ACC": 1.0,
+  "COM_ARM_IMU_GYR": 0.3,
+  "COM_ARM_MAG_ANG": -1,
+  "COM_ARM_MAG_STR": 0,
+  "COM_ARM_WO_GPS": 2
+}

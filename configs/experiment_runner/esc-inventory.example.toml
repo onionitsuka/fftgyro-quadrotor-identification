@@ -1,0 +1,50 @@
+[bluejay]
+# "betaflight-passthrough" or "blheli-usb-linker" after hardware is selected.
+programmer = ""
+recovery_procedure = ""
+propellers_removed = false
+current_limited_supply = false
+spare_esc_validation_passed = false
+validated_bluejay_version = ""
+validated_target = ""
+
+[[esc]]
+esc_id = "esc_1"
+motor_id = "motor_1"
+part_number = "Holybro 520081"
+mcu = ""
+layout = ""
+original_firmware = ""
+settings_backup = "backups/esc_1.txt"
+readout_success = false
+
+[[esc]]
+esc_id = "esc_2"
+motor_id = "motor_2"
+part_number = "Holybro 520081"
+mcu = ""
+layout = ""
+original_firmware = ""
+settings_backup = "backups/esc_2.txt"
+readout_success = false
+
+[[esc]]
+esc_id = "esc_3"
+motor_id = "motor_3"
+part_number = "Holybro 520081"
+mcu = ""
+layout = ""
+original_firmware = ""
+settings_backup = "backups/esc_3.txt"
+readout_success = false
+
+[[esc]]
+esc_id = "esc_4"
+motor_id = "motor_4"
+part_number = "Holybro 520081"
+mcu = ""
+layout = ""
+original_firmware = ""
+settings_backup = "backups/esc_4.txt"
+readout_success = false
+

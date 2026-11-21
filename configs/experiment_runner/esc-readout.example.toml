@@ -1,0 +1,50 @@
+[interface]
+method = "arduino_blheli_bootloader_interface_l"
+board = "Arduino Uno R3"
+mcu = "ATmega328P"
+blheli_suite_version = ""
+interface_firmware = ""
+interface_type = "L"
+signal_pin = -1
+common_ground_confirmed = false
+esc_external_power_confirmed = false
+propellers_removed = false
+current_limited_supply = false
+single_esc_connected = false
+c2_pads_used = false
+
+[[read]]
+attempt = 1
+esc_id = "esc_1"
+part_number = "520081"
+mcu = ""
+layout = ""
+firmware = ""
+timestamp = ""
+settings_file = "evidence/esc_1/read_1_settings.txt"
+screenshot_file = "evidence/esc_1/read_1.png"
+debug_log_file = "evidence/esc_1/read_1_debug.txt"
+
+[[read]]
+attempt = 2
+esc_id = "esc_1"
+part_number = "520081"
+mcu = ""
+layout = ""
+firmware = ""
+timestamp = ""
+settings_file = "evidence/esc_1/read_2_settings.txt"
+screenshot_file = "evidence/esc_1/read_2.png"
+debug_log_file = "evidence/esc_1/read_2_debug.txt"
+
+[[read]]
+attempt = 3
+esc_id = "esc_1"
+part_number = "520081"
+mcu = ""
+layout = ""
+firmware = ""
+timestamp = ""
+settings_file = "evidence/esc_1/read_3_settings.txt"
+screenshot_file = "evidence/esc_1/read_3.png"
+debug_log_file = "evidence/esc_1/read_3_debug.txt"

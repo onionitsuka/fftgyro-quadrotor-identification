@@ -1,0 +1,55 @@
+{
+  "run_name": "fftgyro-roll-pulse-pos-pilot-r01",
+  "metadata": {
+    "stage": "FFTGYRO-2B-pilot",
+    "latex_phase": "5C",
+    "purpose": "validate_transferred_rig_prior_and_separate_input_torque_from_rate_decay",
+    "rig_prior_id": "fftgyro-rig-prior-fb38099-20260726",
+    "rig_prior_role": "validation_prior_not_fresh_135_run_rig_identification",
+    "axis": "roll",
+    "direction": "positive",
+    "dataset_role": "pilot",
+    "wind_speed_mps": 0.0,
+    "repeat": 1,
+    "sync_capture_required": true,
+    "axis_mix_status": "candidate_only_verify_on_propeller_off_outputs"
+  },
+  "uart": {
+    "device": "/dev/serial0",
+    "baud": 921600,
+    "target_system": 1,
+    "target_component": 1
+  },
+  "sample_rate_hz": 100,
+  "timeout_ms": 150,
+  "collective": 0.3,
+  "motor_min": 0.1,
+  "motor_max": 0.8,
+  "axis_mix": [
+    1.0,
+    -1.0,
+    1.0,
+    -1.0
+  ],
+  "motor_mapping_verified": false,
+  "collective_verified": false,
+  "startup_ramp_rate": 0.2,
+  "normal_ramp_rate": 0.1,
+  "abort_ramp_rate": 0.5,
+  "log_directory": "/var/lib/fftgyro-executor",
+  "gpio": {
+    "enabled": true,
+    "chip": "/dev/gpiochip0",
+    "line": 17
+  },
+  "waveform": {
+    "type": "PULSE_COAST",
+    "amplitude": 0.01,
+    "preroll_s": 5.0,
+    "active_s": 0.5,
+    "posthold_s": 8.0,
+    "edge_s": 0.0,
+    "fade_s": 0.0
+  },
+  "session_id": "example-pulse-coast-pilot"
+}

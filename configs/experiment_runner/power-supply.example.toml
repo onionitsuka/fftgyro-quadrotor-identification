@@ -1,0 +1,34 @@
+[supply]
+manufacturer = "KIKUSUI"
+# Copy the complete model name from the front panel or rear nameplate.
+model = ""
+rated_voltage_v = 0.0
+rated_current_a = 0.0
+serial_number = ""
+manual_reference = ""
+
+[experiment_limits]
+# These are experiment limits, not merely the supply nameplate ratings.
+voltage_max_v = 16.7
+current_max_a = 0.0
+
+[rs232]
+# Do not guess these values. Copy them from the model manual and front-panel setup.
+port = ""
+baud = 0
+data_bits = 0
+parity = ""
+stop_bits = 0
+flow_control = ""
+cable_wiring = ""
+command_profile = ""
+
+[verification]
+propellers_removed = false
+output_off_verified = false
+current_limit_verified = false
+emergency_power_removal = ""
+remote_identity_verified = false
+remote_readback_verified = false
+remote_output_off_verified = false
+disconnect_fails_safe = false

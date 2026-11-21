@@ -1,0 +1,156 @@
+{
+  "schema": "fftgyro-axis-session-v1",
+  "session_id": "example-axis-session",
+  "parent_series_id": "example-series",
+  "role": "PILOT",
+  "repetition": 1,
+  "wind_m_s": 0,
+  "heading_deg": 0,
+  "fixed_pitch_deg": 0,
+  "runtime_qualified": false,
+  "maximum_duration_s": 300,
+  "transition_rate_deg_s": 2,
+  "hardware": {
+    "uart_device": "/dev/serial0",
+    "target_system": 1,
+    "target_component": 1,
+    "axis_mix": [
+      1,
+      -1,
+      1,
+      -1
+    ],
+    "motor_min": 0.0,
+    "motor_max": 0.8,
+    "startup_ramp_rate": 0.1,
+    "normal_ramp_rate": 0.1,
+    "abort_ramp_rate": 0.3,
+    "log_directory": "/home/fftgyro/research-data/fftgyro/example",
+    "non_target_pid_enabled": false,
+    "motor_mapping_verified": false,
+    "feedback_frame_verified": false,
+    "stop_verified": false,
+    "rpm_logging_verified": false,
+    "load_logging_verified": false,
+    "sync_verified": false
+  },
+  "pid": {
+    "axis": "PITCH",
+    "additional_limits_enabled": false,
+    "motor_slew_time_s": 0,
+    "zero_quaternion_wxyz": [
+      1,
+      0,
+      0,
+      0
+    ],
+    "zero_angle_deg": 0,
+    "kp": 0.002,
+    "ki": 0.0005,
+    "kd": 0.001,
+    "integral_limit": 0.01,
+    "differential_limit": 0.02,
+    "angle_min_deg": -90,
+    "angle_max_deg": 90,
+    "rate_limit_deg_s": 20,
+    "swing_limit_deg": 90,
+    "tracking_limit_deg": 90,
+    "feedback_timeout_s": 0.1,
+    "saturation_timeout_s": 2.0
+  },
+  "settling": {
+    "error_deg": 5.0,
+    "rate_deg_s": 5.0,
+    "window_s": 0.15,
+    "dwell_s": 0.5,
+    "maximum_hold_s": 15
+  },
+  "startup": {
+    "integral_enable_collective": 0.1,
+    "control_ready_verified": false
+  },
+  "shutdown": {
+    "minimum_duration_s": 2,
+    "external_fade_s": 0.5
+  },
+  "segments": [
+    {
+      "condition_id": "PILOT",
+      "segment_id": "pilot-001",
+      "kind": "HOLD",
+      "duration_s": 5,
+      "start_deg": 0,
+      "collective": 0.2,
+      "hold_id": "initial",
+      "require_settled": true
+    },
+    {
+      "condition_id": "PILOT",
+      "segment_id": "pilot-002",
+      "kind": "SINE",
+      "duration_s": 42,
+      "start_deg": 0,
+      "collective": 0.2,
+      "amplitude_deg": 2,
+      "frequency_hz": 0.2,
+      "fade_s": 1
+    },
+    {
+      "condition_id": "PILOT",
+      "segment_id": "pilot-003",
+      "kind": "HOLD",
+      "duration_s": 5,
+      "start_deg": 0,
+      "collective": 0.2,
+      "hold_id": "between",
+      "require_settled": true
+    },
+    {
+      "condition_id": "PILOT",
+      "segment_id": "pilot-004",
+      "kind": "SINE",
+      "duration_s": 62,
+      "start_deg": 0,
+      "collective": 0.2,
+      "amplitude_deg": 1,
+      "frequency_hz": 0.2,
+      "fade_s": 1,
+      "external_amplitude": 0.00125,
+      "external_frequency_hz": 0.35,
+      "external_phase_rad": 1.5707963267948966
+    },
+    {
+      "condition_id": "PILOT",
+      "segment_id": "pilot-005",
+      "kind": "HOLD",
+      "duration_s": 5,
+      "start_deg": 0,
+      "collective": 0.2,
+      "hold_id": "before-move",
+      "require_settled": true
+    },
+    {
+      "condition_id": "PILOT",
+      "segment_id": "pilot-006",
+      "kind": "MOVE",
+      "duration_s": 5,
+      "start_deg": 0,
+      "collective": 0.2,
+      "end_deg": -5
+    },
+    {
+      "condition_id": "PILOT",
+      "segment_id": "pilot-007",
+      "kind": "HOLD",
+      "duration_s": 5,
+      "start_deg": -5,
+      "collective": 0.2,
+      "hold_id": "final",
+      "require_settled": true
+    }
+  ],
+  "collective_by_rpm_ratio": {
+    "1": 0.2
+  },
+  "external_delta": 0.00125
+}

@@ -1,0 +1,5 @@
+simulation_wave.tmp
+__pycache__/
+*-backups/
+*.kicad_prl
+~*.lck

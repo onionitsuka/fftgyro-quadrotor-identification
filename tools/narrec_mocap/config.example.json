@@ -1,0 +1,15 @@
+{
+  "rigid_body_id": 1,
+  "world_from_motive": [[1, 0, 0], [0, 0, 1], [0, -1, 0]],
+  "rigid_from_body": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+  "origin_motive_m": [0, 0, 0],
+  "body_to_rigid_m": [0, 0, 0],
+  "position_sigma_m": 0.03,
+  "angle_sigma_rad": 0.1,
+  "bounds_min_m": [-2, -2, -2],
+  "bounds_max_m": [2, 2, 0.5],
+  "max_age_s": 0.1,
+  "send_hz": 50,
+  "bench_transform_verified": false,
+  "notes": "例示値。座標軸、剛体姿勢、原点、マーカー原点のオフセット、範囲、ノイズを実測して変更する。verifiedは地上で全軸の位置・姿勢を確認してからtrueにする。"
+}
